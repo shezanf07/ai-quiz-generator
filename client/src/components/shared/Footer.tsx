@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { BookOpen } from "lucide-react";
 
 export default function Footer() {
   return (
