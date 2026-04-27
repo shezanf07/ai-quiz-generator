@@ -4,6 +4,28 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  /* Hide scrollbar but keep scrollability */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Hero perspective card — flat on mobile, static 3D tilt on lg+ only */
+.hero-card {
+  transform: none;
+}
+
+@media (min-width: 1024px) {
+  .hero-card {
+    transform: rotateY(-12deg) rotateX(8deg) scale(0.95);
+  }
+}
+
 @layer base {
   :root {
     --background: #f4f0e6;
@@ -36,14 +58,22 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground font-sans antialiased;
   }
+
   ::selection {
     background-color: var(--primary);
     color: var(--primary-foreground);
   }
-  h1, h2, h3, h4, h5, h6 {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-serif;
   }
 }

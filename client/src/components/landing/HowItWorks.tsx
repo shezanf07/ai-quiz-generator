@@ -4,22 +4,22 @@ const steps = [
   {
     icon: UploadCloud,
     title: "Upload",
-    description: "Provide any document, link, or block of text to our AI scribe."
+    description: "Drop in a PDF, DOCX, or paste your text directly."
   },
   {
     icon: Cpu,
     title: "AI Extracts",
-    description: "Our engine identifies core concepts and creates complex questions."
+    description: "The AI reads through your content and generates quiz questions."
   },
   {
     icon: Edit2,
     title: "You Edit",
-    description: "Review and curate the draft to ensure absolute academic rigor."
+    description: "Review the questions and make any changes you want before publishing."
   },
   {
     icon: Share2,
     title: "Share Link",
-    description: "Instantly publish and track the progress of your learners."
+    description: "Get a shareable link and track how students are doing."
   }
 ];
 
@@ -27,10 +27,10 @@ export default function HowItWorks() {
   return (
     <section className="w-full px-6 md:px-12 py-24 max-w-5xl mx-auto flex flex-col items-center gap-16">
       <div className="text-center space-y-4">
-        <h2 className="text-4xl md:text-5xl font-serif font-bold text-foreground">The Path to Enlightenment</h2>
-        <p className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-widest">Four simple steps from raw data to a bespoke educational manuscript.</p>
+        <h2 className="text-4xl md:text-5xl font-serif font-bold text-foreground">How It Works</h2>
+        <p className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-widest">Four steps from your notes to a shareable quiz.</p>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 w-full mt-8">
         {steps.map((step, idx) => (
           <div key={idx} className="flex flex-col items-center text-center gap-6 group cursor-default">

@@ -35,7 +35,7 @@ export default function LoginForm() {
 
       <button
         type="submit"
-        className="w-full bg-[#B28228] hover:bg-[#976E22] text-white text-[11px] font-bold uppercase tracking-[0.15em] px-8 py-4 rounded-[3px] transition-colors mt-2"
+        className="w-full bg-[#B28228]hover:bg-[#976E22] text-white text-[11px] font-bold uppercase tracking-[0.15em] px-8 py-4 rounded-[3px] transition-colors mt-2"
       >
         Log in ➔
       </button>

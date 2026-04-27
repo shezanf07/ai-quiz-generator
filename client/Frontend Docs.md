@@ -7,672 +7,331 @@
 | Prepared By | Shezan Fayaz |
 | Institution | Islamia College of Science and Commerce |
 | Project | AI-Powered Quiz Generator - BCA Final Year |
-| Document | Frontend Modules, Pages & Components |
-| Date | March 2026 |
-| Version | 1.0 |
-
-
-<table>
-  <tr>
-    <td>
-      <h3>8</h3>
-      <p>Pages</p>
-    </td>
-    <td>
-      <h3>35</h3>
-      <p>Components</p>
-    </td>
-    <td>
-      <h3>3</h3>
-      <p>Layouts</p>
-    </td>
-    <td>
-      <h3>7</h3>
-      <p>Services/Hooks</p>
-    </td>
-  </tr>
-</table>
+| Document | Frontend Modules, Pages and Components |
+| Date | April 2026 |
+| Version | 1.1 |
 
 ---
 
-# 1. Module Division
+## 1. Frontend Overview
 
-The frontend is divided into 6 functional modules, split across two user flows. The creator flow (modules 1-4) handles quiz creation, editing, configuration, and publishing. The student flow (modules 5-6) handles quiz delivery and results display. Routing and state management wires all modules together.
+The frontend of the AI-Powered Quiz Generator, branded as **Quizly**, provides the complete user interface for creators and students. It allows a creator to upload learning material, generate a quiz, edit questions, configure quiz rules, publish the quiz, share it through a link or QR code, and view quiz statistics. Students can open the shared quiz link, answer questions, submit the quiz, and review their result.
 
-## 1.1 Three-person team split
-
-Based on a 3-person team with one experienced developer, the work is split by layer:
-
-<table>
-  <thead>
-    <tr>
-      <th>Person</th>
-      <th>Layer / Responsibility</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Person 1 (intermediate)</td>
-      <td>Frontend - all 6 modules, pages, components, routing, state</td>
-    </tr>
-    <tr>
-      <td>Person 2 (most experienced)</td>
-      <td>Backend - Express APIs, auth, file processing, AI integration</td>
-    </tr>
-    <tr>
-      <td>Person 3 (intermediate)</td>
-      <td>Database - MongoDB schema, Mongoose models, indexes, Atlas setup</td>
-    </tr>
-  </tbody>
-</table>
-
-## 1.2 Frontend module overview
-
-### Module 1 - File upload UI
-
-*   DropZone: drag-and-drop file input area
-*   FileValidator: checks type (PDF/DOCX/TXT) and size (max 25 MB)
-*   UploadProgress: progress bar with real-time percentage
-*   ExtractedPreview: shows parsed text before AI generation
-*   ErrorDisplay: user-friendly validation error messages
-*   API call: POST /api/upload
-
-### Module 2 - Quiz editor
-
-*   QuestionList: list of all AI-generated questions with reorder support
-*   QuestionCard: individual question with inline editing
-*   OptionEditor: edit individual answer option text
-*   AnswerSelector: flag which option is the correct answer
-*   AIRegenerate: re-trigger AI for a specific question
-*   QuizPreview: live preview of how the quiz will look
-*   API call: POST /api/ai/generate-options
+The frontend is built with React, TypeScript, Vite, React Router and Tailwind CSS. The interface uses a refined academic visual style with serif headings, warm gold accents, responsive layouts, and light/dark theme support.
 
 ---
 
-## Module 3 - Template selector
-*   TemplateCard: 5 theme cards (Dark, Minimal, Colorful, Professional, Modern)
-*   ThemeApplicator: applies selected CSS variables to preview
-*   LinkDisplay: show generated short URL
-*   QRCode: auto-generated QR pointing to quiz link
-*   CopyButton: one-click copy to clipboard
-*   LinkExpiryPicker: set optional link expiry
+## 2. Technology Stack
 
-## Module 4 - Config panel
-*   TimerSettings: per-question time (5-60s) and total quiz duration
-*   QuizToggles: shuffle questions, allow retake, instant vs end feedback
-*   PassingScore: percentage threshold slider
-*   PublishButton: triggers quiz publish and link generation
-*   API call: POST /api/quiz/create
-
-## Module 5 - Quiz delivery UI
-*   QuestionCard: renders MCQ / True-False / Fill-in-blank
-*   OptionButton: clickable option with selected/correct/wrong state
-*   TimerBar: countdown bar per question or total
-*   ProgressBar: visual progress (Question X of Y)
-*   Navigation: Previous / Next / Skip buttons
-*   FeedbackOverlay: instant correct/wrong flash after answer
-*   BookmarkToggle: bookmark a question to revisit
-*   StatusDots: dot grid showing answered / skipped / unanswered
-*   API call: POST /api/quiz/submit-answer
-
-## Module 6 - Results page
-*   ScoreSummary: final score with percentage and pass/fail status
-*   PerformanceChart: correct vs incorrect vs unanswered breakdown
-*   AnswerReview: per-question correct answer with explanation
-*   PDFExport: download result report using jsPDF + html2canvas
-*   RetakeButton: restart quiz if creator enabled retakes
-*   API call: GET /api/results/:resultId
+| Technology | Purpose |
+| --- | --- |
+| React | Component-based frontend UI |
+| TypeScript | Type safety for components and props |
+| Vite | Development server and production build tool |
+| React Router | Page routing and navigation |
+| Tailwind CSS | Utility-first styling |
+| CSS Variables | Theme color system |
+| Lucide React | Icons used across the UI |
+| qrcode.react | QR code generation on the share page |
+| clsx | Conditional class names |
 
 ---
 
-# 1.3 Shared / wiring layer
+## 3. Application Routes
 
-Beyond the 6 feature modules, the following cross-cutting concerns apply to the entire frontend:
-
-<table>
-  <thead>
-    <tr>
-      <th>Concern</th>
-      <th>Details</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Routing (React Router v6)</td>
-      <td>All page routes defined in router.tsx. ProtectedRoute wraps creator pages.</td>
-    </tr>
-    <tr>
-      <td>Global state (Zustand)</td>
-      <td>3 stores: quizStore (questions, quiz meta), authStore (user, token), sessionStorage (live quiz session).</td>
-    </tr>
-    <tr>
-      <td>Axios instance (api.ts)</td>
-      <td>Base URL, Authorization header injection, response interceptors for 401 handling.</td>
-    </tr>
-    <tr>
-      <td>Custom hooks</td>
-      <td>useTimer (countdown logic), useQuizSession (answer tracking), useFileUpload (upload + progress).</td>
-    </tr>
-    <tr>
-      <td>Shared components</td>
-      <td>Navbar, Spinner, Toast, Modal, FormInput, ProtectedRoute, NotFoundPage.</td>
-    </tr>
-    <tr>
-      <td>TypeScript types</td>
-      <td>quiz.types.ts, user.types.ts, result.types.ts - shared across pages, services, stores.</td>
-    </tr>
-  </tbody>
-</table>
+| Route | Page | Description |
+| --- | --- | --- |
+| `/` | Landing Page | Introduces Quizly and directs users to create a quiz |
+| `/login` | Login Page | Allows creators to sign in |
+| `/register` | Register Page | Allows creators to create an account |
+| `/dashboard` | Dashboard Page | Shows the creator's generated quizzes |
+| `/create/upload` | Upload Page | Accepts PDF, DOCX, TXT or pasted text |
+| `/create/edit` | Quiz Editor Page | Allows review and editing of generated questions |
+| `/create/config` | Quiz Config Page | Allows title, theme, timer and passing score settings |
+| `/create/share` | Share Link Page | Shows the generated share link and QR code |
+| `/quiz/:id` | Quiz View Page | Allows students to take a published quiz |
+| `/quiz/:id/results` | Results Page | Shows score, pass/fail status and answer review |
+| `/stats/:id` | Stats Page | Shows creator analytics for a quiz |
+| `/terms` | Terms Page | Terms and conditions |
+| `/privacy` | Privacy Page | Privacy policy |
 
 ---
 
-# 2. Pages (9 total)
+## 4. Main User Flows
 
-The application has 9 pages divided across three flows - creator, student, and auth. Each page is a standalone route in React Router v6. Creator pages are protected by ProtectedRoute.
+### 4.1 Creator Flow
 
-## 2.1 Creator flow pages (5 pages)
+1. The creator opens the landing page.
+2. The creator logs in or registers.
+3. The creator opens the dashboard.
+4. The creator starts a new quiz.
+5. The creator uploads a document or pastes plain text.
+6. AI generates questions from the uploaded material.
+7. The creator edits question text and answer options.
+8. The creator marks the correct option for each question.
+9. The creator configures quiz title, theme, timer and passing score.
+10. The creator publishes the quiz.
+11. The creator receives a shareable link and QR code.
+12. The creator views quiz statistics after students submit attempts.
 
-### LandingPage
-Hero section, feature overview, call-to-action to sign up or start uploading.
+### 4.2 Student Flow
 
-*   HeroSection
-*   FeatureCards
-*   CTAButton
-*   Navbar
-
-### UploadPage
-File upload interface. Drag-and-drop, validation, progress, and extracted text preview.
-
-*   DropZone
-*   FileValidator
-*   UploadProgress
-*   ExtractedPreview
-*   ErrorDisplay
-
-### EditorPage
-Review and edit all AI-generated questions before publishing. Supports reorder, edit, regenerate.
-
-*   QuestionList
-*   QuestionCard
-*   OptionEditor
-*   AnswerSelector
-*   AIREgenerate
-*   QuizPreview
-
-### ConfigPage
-Select UI theme, configure quiz settings (timer, shuffle, passing score), then publish.
-
-*   TemplateCard
-*   ThemeApplicator
-*   TimerSettings
-*   QuizToggles
-*   PassingScore
-*   PublishButton
+1. The student opens a shared quiz link.
+2. The student answers multiple-choice questions.
+3. The student moves through the quiz using previous and next controls.
+4. The student submits the quiz.
+5. The result page shows score percentage, pass/fail status and answer review.
 
 ---
 
-## LinkPage
-/link/:quizId
+## 5. Page Modules
 
-Shows the generated shareable URL and QR code after publishing. Copy and share options.
+### 5.1 Landing Page
 
-LinkDisplay | QRCode | CopyButton | LinkExpiryPicker
+File: `src/pages/LandingPage.tsx`
 
----
+The landing page presents the product and contains:
 
-## 2.2 Student flow pages (2 pages)
+| Component | Role |
+| --- | --- |
+| `Navbar` | Brand, theme toggle, login and register navigation |
+| `HeroSection` | Main headline, product message and upload CTA |
+| `FeatureCards` | Highlights AI generation, editing and sharing |
+| `HowItWorks` | Shows the four-step process |
+| `BottomCTA` | Final call-to-action |
+| `Footer` | Privacy, terms and contact links |
 
-### QuizPage
-/quiz/:shortId
+### 5.2 Authentication Pages
 
-Full quiz-taking UI. Renders the creator-selected theme. Handles timer, navigation, answer tracking, and live scoring.
+Files:
 
-QuestionCard | OptionButton | TimerBar | ProgressBar | Navigation
-FeedbackOverlay | BookmarkToggle | StatusDots
+- `src/pages/AuthPage.tsx`
+- `src/layouts/AuthLayout.tsx`
+- `src/components/auth/LoginForm.tsx`
+- `src/components/auth/RegisterForm.tsx`
+- `src/components/auth/GoogleOAuthBtn.tsx`
 
-### ResultsPage
-/results/:resultId
+The authentication module provides:
 
-Final score with percentage, pass/fail status, per-question breakdown with correct answers, and PDF download option.
+- Login form with email and password.
+- Register form with full name, email, password and confirm password.
+- Password visibility toggle.
+- Google OAuth button.
+- Terms and privacy links.
+- Split-screen academic branding layout on large screens.
 
-ScoreSummary | PerformanceChart | AnswerReview | PDFExport | RetakeButton
+### 5.3 Dashboard Page
 
----
+File: `src/pages/DashboardPage.tsx`
 
-## 2.3 Auth + utility pages (2 pages)
+The dashboard provides the creator's main workspace. It displays quiz cards with title, quiz type, question count and recent activity. It also provides the "Create New Quiz" action that starts the quiz creation workflow.
 
-### AuthPage
-/login • /register
+### 5.4 Creator Layout
 
-Email/password login and registration. Google OAuth button. Redirects to /upload on success.
+File: `src/layouts/CreatorLayout.tsx`
 
-LoginForm | RegisterForm | GoogleOAuthBtn | FormInput
+The creator layout wraps the quiz creation pages and provides:
 
----
+- Brand navigation.
+- Dashboard/avatar link.
+- Four-step progress indicator.
+- Responsive stepper for desktop and mobile.
 
----
+Workflow steps:
 
-# NotFoundPage
-* (fallback)
+| Step | Label | Route |
+| --- | --- | --- |
+| 1 | Upload | `/create/upload` |
+| 2 | Edit | `/create/edit` |
+| 3 | Configure | `/create/config` |
+| 4 | Publish | `/create/share` |
 
-404 page shown for any unmatched route. Links back to home.
+### 5.5 Upload Page
 
-CTAButton
+File: `src/pages/UploadPage.tsx`
 
----
----
+The upload page accepts the source material used to generate the quiz. It supports three file types and direct text input.
 
-# 3. Components (35 total)
+Features:
 
-Components are organized into feature folders matching their parent page. Shared components live in `components/shared/` and are reused across multiple pages.
+- Drag-and-drop upload area.
+- Supported file labels: PDF, DOCX and TXT.
+- Pasted plain-text input area.
+- Upload/parsing/ready states.
+- Continue action to generate quiz with AI.
 
-## 3.1 Upload components (5 components)
+### 5.6 Quiz Editor Page
 
-<table>
-  <thead>
-    <tr>
-      <th>Component</th>
-      <th>Responsibility</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>DropZone.tsx</td>
-      <td>Drag-and-drop zone. Accepts PDF, DOCX, TXT. Emits selected file to parent.</td>
-    </tr>
-    <tr>
-      <td>FileValidator.tsx</td>
-      <td>Checks MIME type and file size on the client side before upload begins.</td>
-    </tr>
-    <tr>
-      <td>UploadProgress.tsx</td>
-      <td>Displays real-time upload progress bar using Axios onUploadProgress callback.</td>
-    </tr>
-    <tr>
-      <td>ExtractedPreview.tsx</td>
-      <td>Renders the text extracted from the file. Allows creator to review before triggering AI.</td>
-    </tr>
-    <tr>
-      <td>ErrorDisplay.tsx</td>
-      <td>Shows validation or upload errors with clear, user-friendly messages.</td>
-    </tr>
-  </tbody>
-</table>
+File: `src/pages/QuizEditorPage.tsx`
 
-## 3.2 Editor components (6 components)
+The quiz editor allows creators to review and refine generated questions before publishing.
 
-<table>
-  <thead>
-    <tr>
-      <th>Component</th>
-      <th>Responsibility</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>QuestionList.tsx</td>
-      <td>Renders the full list of questions. Supports drag-to-reorder via react-dnd or similar.</td>
-    </tr>
-    <tr>
-      <td>QuestionCard.tsx</td>
-      <td>Single question display with inline editing of question text. Reused on QuizPage too.</td>
-    </tr>
-    <tr>
-      <td>OptionEditor.tsx</td>
-      <td>Editable input for each of the 4 option texts within a question.</td>
-    </tr>
-    <tr>
-      <td>AnswerSelector.tsx</td>
-      <td>Radio-button style selector to mark which option is correct.</td>
-    </tr>
-    <tr>
-      <td>AIRegenerate.tsx</td>
-      <td>Button that re-calls POST /api/ai/generate-options for a single question.</td>
-    </tr>
-    <tr>
-      <td>QuizPreview.tsx</td>
-      <td>Side panel showing a live preview of how the quiz looks with current theme applied.</td>
-    </tr></tbody></table>
+Features:
 
----
+- Question list/sidebar on desktop.
+- Compact question selector on mobile.
+- Editable question text.
+- Four editable answer options.
+- Correct answer selector.
+- Delete question action.
+- Regenerate question action.
+- Continue action to quiz configuration.
 
-<table>
-  <thead>
-    <tr>
-      <th>Component</th>
-      <th>Responsibility</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>TemplateCard.tsx</td>
-      <td>Clickable card for each of the 5 UI themes. Shows theme name and mini preview.</td>
-    </tr>
-    <tr>
-      <td>ThemeApplicator.tsx</td>
-      <td>Applies selected theme's CSS variables to the preview panel in real time.</td>
-    </tr>
-    <tr>
-      <td>TimerSettings.tsx</td>
-      <td>Input fields for per-question time limit (5-60s) and total quiz duration.</td>
-    </tr>
-    <tr>
-      <td>QuizToggles.tsx</td>
-      <td>Toggle switches for: shuffle questions, allow retake, instant vs end-of-quiz feedback.</td>
-    </tr>
-    <tr>
-      <td>PassingScore.tsx</td>
-      <td>Slider input for setting the passing percentage threshold (0-100%).</td>
-    </tr>
-    <tr>
-      <td>PublishButton.tsx</td>
-      <td>Calls POST /api/quiz/create, then navigates to LinkPage on success.</td>
-    </tr>
-  </tbody>
-</table>
+### 5.7 Quiz Config Page
 
-## 3.4 Link components (4 components)
+File: `src/pages/QuizConfigPage.tsx`
 
-<table>
-  <thead>
-    <tr>
-      <th>Component</th>
-      <th>Responsibility</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>LinkDisplay.tsx</td>
-      <td>Shows the full shareable URL in a styled text box with click-to-copy.</td>
-    </tr>
-    <tr>
-      <td>QRCode.tsx</td>
-      <td>Renders the QR code image returned from the backend for mobile quiz access.</td>
-    </tr>
-    <tr>
-      <td>CopyButton.tsx</td>
-      <td>Copies the quiz URL to clipboard. Shows a brief 'Copied!' confirmation.</td>
-    </tr>
-    <tr>
-      <td>LinkExpiryPicker.tsx</td>
-      <td>Dropdown to set link expiry: permanent, 24 hours, 7 days, or 30 days.</td>
-    </tr>
-  </tbody>
-</table>
+The config page stores final quiz settings.
 
-## 3.5 Quiz delivery components (8 components)
+Features:
 
-<table>
-  <thead>
-    <tr>
-      <th>Component</th>
-      <th>Responsibility</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Option</td></tr></tbody></table>
+- Theme selector.
+- Timer enable/disable toggle.
+- Duration setting in minutes.
+- Preset duration options: 5, 15, 30, 45 and 60 minutes.
+- Passing score slider.
+- Quiz title input.
+- Publish action.
+
+Available themes:
+
+| Theme ID | Display Name |
+| --- | --- |
+| `light` | Light |
+| `dark-academic` | Dark Academic |
+| `amber-glow` | Amber Glow |
+
+### 5.8 Share Link Page
+
+Files:
+
+- `src/pages/ShareLinkPage.tsx`
+- `src/components/quiz/ShareModal.tsx`
+
+The share page appears after a quiz is published.
+
+Features:
+
+- Published success message.
+- Shareable quiz URL.
+- Copy link action.
+- QR code display.
+- Download QR code action.
+- Expiry selector with 24 hours, 7 days, 30 days and never options.
+- Link to quiz statistics.
+
+### 5.9 Quiz View Page
+
+File: `src/pages/QuizViewPage.tsx`
+
+The quiz view page is used by students.
+
+Features:
+
+- Quiz brand header.
+- Question progress.
+- Timer display.
+- Multiple-choice question card.
+- Selectable answer options.
+- Previous and next question controls.
+
+### 5.10 Results Page
+
+File: `src/pages/ResultsPage.tsx`
+
+The results page shows the student's quiz performance.
+
+Features:
+
+- Circular score display.
+- Score percentage.
+- Correct answer count.
+- Pass/fail badge.
+- Question review list.
+- Correct and incorrect answer states.
+- Retake quiz action.
+- Back to home action.
+
+### 5.11 Stats Page
+
+File: `src/pages/StatsPage.tsx`
+
+The stats page gives creators a summary of student performance.
+
+Features:
+
+- Total submissions.
+- Pass rate.
+- Average score.
+- Recent submissions table.
+- Student name, score, time taken, status and submission date.
+- Load more results action.
+
+### 5.12 Terms and Privacy Pages
+
+Files:
+
+- `src/pages/TermsPage.tsx`
+- `src/pages/PrivacyPage.tsx`
+
+These pages provide simple academic-project policy content for users.
 
 ---
 
-<table>
-  <thead>
-    <tr>
-      <th>Component</th>
-      <th>Responsibility</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>StatusDots.tsx</td>
-      <td>Grid of small dots - green (answered), gray (unanswered), amber (skipped).</td>
-    </tr>
-    <tr>
-      <td>QuestionCard.tsx</td>
-      <td>Shared with editor. Renders question text and handles MCQ / T-F / fill-blank types.</td>
-    </tr>
-  </tbody>
-</table>
+## 6. Shared Components
 
-## 3.6 Results components (5 components)
-
-<table>
-  <thead>
-    <tr>
-      <th>Component</th>
-      <th>Responsibility</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>ScoreSummary.tsx</td>
-      <td>Large score display: percentage, correct/incorrect/unanswered counts, pass/fail badge.</td>
-    </tr>
-    <tr>
-      <td>PerformanceChart.tsx</td>
-      <td>Doughnut or bar chart (Chart.js) showing score breakdown visually.</td>
-    </tr>
-    <tr>
-      <td>AnswerReview.tsx</td>
-      <td>Per-question accordion: shows selected answer, correct answer, and AI explanation.</td>
-    </tr>
-    <tr>
-      <td>PDFExport.tsx</td>
-      <td>Uses jsPDF + html2canvas to capture and download the results page as a PDF.</td>
-    </tr>
-    <tr>
-      <td>RetakeButton.tsx</td>
-      <td>Shown only when allow_retake is enabled. Re-starts session from the same quiz link.</td>
-    </tr>
-  </tbody>
-</table>
-
-## 3.7 Shared components (6 components)
-
-<table>
-  <thead>
-    <tr>
-      <th>Component</th>
-      <th>Responsibility</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Navbar.tsx</td>
-      <td>Top navigation bar with logo, nav links, and auth</td></tr></tbody></table>
+| Component | File | Description |
+| --- | --- | --- |
+| `Navbar` | `components/shared/Navbar.tsx` | Top navigation for landing page |
+| `Footer` | `components/shared/Footer.tsx` | Footer with policy links |
+| `ThemeToggle` | `components/shared/ThemeToggle.tsx` | Light/dark mode switch |
+| `FormInput` | `components/shared/FormInput.tsx` | Reusable input component |
+| `GoogleOAuthBtn` | `components/auth/GoogleOAuthBtn.tsx` | Google authentication button |
+| `OptionCard` | `components/quiz/OptionCard.tsx` | Selectable answer option |
+| `ReviewCard` | `components/quiz/ReviewCard.tsx` | Result review card |
+| `ShareModal` | `components/quiz/ShareModal.tsx` | Share URL and QR display |
 
 ---
 
-# 4. Full Folder Structure
+## 7. Theme System
 
-The complete src/ directory layout. Color coding: green = page, purple = component, orange = service/hook, red = store, gray = config.
+The frontend uses CSS variables defined in `src/index.css`.
 
-```mermaid
-graph TD
-    A[src/] --> B[layouts/]
-    A --> C[pages/]
-    A --> D[components/]
-    A --> E[config/]
+| Variable | Purpose |
+| --- | --- |
+| `--background` | Page background |
+| `--foreground` | Main text color |
+| `--primary` | Main accent color |
+| `--primary-hover` | Accent hover color |
+| `--primary-foreground` | Text on primary buttons |
+| `--card` | Card background |
+| `--card-foreground` | Text inside cards |
+| `--muted` | Muted background |
+| `--muted-foreground` | Secondary text |
+| `--border` | Borders |
 
-    B --> F[MainLayout.tsx]
-    B --> G[AuthLayout.tsx]
-    B --> H[QuizLayout.tsx]
-
-    C --> I[LandingPage.tsx]
-    C --> J[AuthPage.tsx]
-    C --> K[UploadPage.tsx]
-    C --> L[EditorPage.tsx]
-    C --> M[ConfigPage.tsx]
-    C --> N[LinkPage.tsx]
-    C --> O[QuizPage.tsx]
-    C --> P[ResultsPage.tsx]
-    C --> Q[NotFoundPage.tsx]
-
-    D --> R[upload/]
-    D --> S[editor/]
-
-    R --> T[DropZone.tsx]
-    R --> U[FileValidator.tsx]
-    R --> V[UploadProgress.tsx]
-    R --> W[ExtractedPreview.tsx]
-    R --> X[ErrorDisplay.tsx]
-
-    S --> Y[QuestionList.tsx]
-    S --> Z[QuestionCard.tsx]
-    S --> AA[OptionEditor.tsx]
-    S --> BB[AnswerSelector.tsx]
-    S --> CC[AIRegenerate.tsx]
-    S --> DD[QuizPreview.tsx]
-
-    E --> EE[TemplateCard.tsx]
-    E --> FF[ThemeApplicator.tsx]
-    E --> GG[TimerSettings.tsx]
-    E --> HH[QuizToggles.tsx]
-    E --> II[PassingScore.tsx]
-    E --> JJ[PublishButton.tsx]
-```
+The selected light/dark mode is stored in `localStorage` under the key `theme`.
 
 ---
 
-link/
-LinkDisplay.tsx
-QRCode.tsx
-CopyButton.tsx
-LinkExpiryPicker.tsx
-quiz/
-OptionButton.tsx
-TimerBar.tsx
-ProgressBar.tsx
-Navigation.tsx
-FeedbackOverlay.tsx
-BookmarkToggle.tsx
-StatusDots.tsx
-results/
-ScoreSummary.tsx
-PerformanceChart.tsx
-AnswerReview.tsx
-PDFExport.tsx
-RetakeButton.tsx
-shared/
-Navbar.tsx
-Spinner.tsx
-Toast.tsx
-Modal.tsx
-FormInput.tsx
-ProtectedRoute.tsx
-store/
-quizStore.ts
-authStore.ts
-sessionStore.ts
-services/
-api.ts
-quizService.ts
-fileService.ts
-authService.ts
-hooks/
-useTimer.ts
-useQuizSession.ts
-useFileUpload.ts
-types/
-quiz.types.ts
+## 8. Frontend Data Requirements
+
+The frontend requires the backend to provide the following data:
+
+| Feature | Required data |
+| --- | --- |
+| Authentication | User name, email, token/session |
+| Dashboard | User quizzes with title, type, question count and last updated date |
+| Upload | File metadata, extracted text and processing status |
+| Quiz Editor | Generated questions, options and correct answers |
+| Config | Quiz title, selected theme, timer and passing score |
+| Share | Public quiz link, QR value and expiry |
+| Quiz View | Published quiz questions and settings |
+| Results | Score, percentage, pass/fail state and answer review |
+| Stats | Total submissions, pass rate, average score and recent submissions |
 
 ---
 
-user.types.ts
-result.types.ts
-App.tsx
-main.tsx
-router.tsx
+## 9. Summary
 
-# 5. Summary
-
-<table>
-<thead>
-<tr>
-<th>Category</th>
-<th>Count / Details</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Pages (total)</td>
-<td>9 - LandingPage, AuthPage, UploadPage, EditorPage, ConfigPage, LinkPage, QuizPage, ResultsPage, NotFoundPage</td>
-</tr>
-<tr>
-<td>Creator flow pages</td>
-<td>5 - Landing, Upload, Editor, Config, Link</td>
-</tr>
-<tr>
-<td>Student flow pages</td>
-<td>2 - Quiz, Results</td>
-</tr>
-<tr>
-<td>Auth + utility pages</td>
-<td>2 - Auth, NotFound</td>
-</tr>
-<tr>
-<td>Components (total)</td>
-<td>35 across 7 feature folders</td>
-</tr>
-<tr>
-<td>Upload components</td>
-<td>5 - DropZone, FileValidator, UploadProgress, ExtractedPreview, ErrorDisplay</td>
-</tr>
-<tr>
-<td>Editor components</td>
-<td>6 - QuestionList, QuestionCard, OptionEditor, AnswerSelector, AIRegenerate, QuizPreview</td>
-</tr>
-<tr>
-<td>Config components</td>
-<td>6 - TemplateCard, ThemeApplicator, TimerSettings, QuizToggles, PassingScore, PublishButton</td>
-</tr>
-<tr>
-<td>Link components</td>
-<td>4 - LinkDisplay, QRCode, CopyButton, LinkExpiryPicker</td>
-</tr>
-<tr>
-<td>Quiz delivery components</td>
-<td>8 - OptionButton, TimerBar, ProgressBar, Navigation, FeedbackOverlay, BookmarkToggle, StatusDots, QuestionCard</td>
-</tr>
-<tr>
-<td>Results components</td>
-<td>5 - ScoreSummary, PerformanceChart, AnswerReview, PDFExport, RetakeButton</td>
-</tr>
-<tr>
-<td>Shared components</td>
-<td>6 - Navbar, Spinner, Toast, Modal, FormInput, ProtectedRoute</td>
-</tr>
-<tr>
-<td>Layouts</td>
-<td>3 - MainLayout, AuthLayout, QuizLayout</td>
-</tr>
-<tr>
-<td>Zustand stores</td>
-<td>3 - quizStore, authStore, sessionStore</td>
-</tr>
-<tr>
-<td>Services</td>
-<td>4 - api.ts, quizService, fileService, authService</td>
-</tr>
-<tr>
-<td>Custom hooks</td>
-<td>3 - useTimer, useQuizSession, useFileUpload</td>
-</tr>
-</tbody>
-</table>
-
----
-
-<table>
-  <tr>
-    <td>TypeScript type files</td>
-    <td>3 - quiz.types.ts, user.types.ts, result.types.ts</td>
-  </tr>
-</table>
-
-Prepared by Shezan Fayaz | Islamia College of Science and Commerce | March 2026
-
-March 2026
-
-
-
+The frontend defines the complete software flow for Quizly. The backend and database should follow this frontend structure so each page can be connected directly to API data without changing the user experience.

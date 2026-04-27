@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
 import LandingPage from './pages/LandingPage';
 import AuthPage from './pages/AuthPage';
 import QuizViewPage from './pages/QuizViewPage';
@@ -14,25 +15,35 @@ import TermsPage from './pages/TermsPage';
 import PrivacyPage from './pages/PrivacyPage';
 
 function App() {
+  // Initialize dark mode globally on first load
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme") || "light";
+    if (savedTheme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, []);
+
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<AuthPage />} />
         <Route path="/register" element={<AuthPage />} />
-        
+
         {/* Creator Workflow Routes */}
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/create" element={<CreatorLayout />}>
-           <Route path="upload" element={<UploadPage />} />
-           <Route path="edit" element={<QuizEditorPage />} />
-           <Route path="config" element={<QuizConfigPage />} />
-           <Route path="share" element={<ShareLinkPage />} />
+          <Route path="upload" element={<UploadPage />} />
+          <Route path="edit" element={<QuizEditorPage />} />
+          <Route path="config" element={<QuizConfigPage />} />
+          <Route path="share" element={<ShareLinkPage />} />
         </Route>
 
         <Route path="/quiz/:id" element={<QuizViewPage />} />
         <Route path="/quiz/:id/results" element={<ResultsPage />} />
-    
+
         <Route path="/stats/:id" element={<StatsPage />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
