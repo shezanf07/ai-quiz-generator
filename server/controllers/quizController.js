@@ -1,8 +1,20 @@
 import * as quizService from '../services/quizService.js'
+import Quiz from '../models/Quiz.model.js';
 
 export const createQuiz = async (req , res) => {
     try {
         const {sourceDocumentId , aiGenerationId , title , questions } = req.body;
+
+        if (req.user.role !== 'admin') {
+            const quizCount = await Quiz.countDocuments({ creatorId: req.user._id });
+            if (quizCount >= 1) {
+                return res.status(403).json({
+                    message: "Free tier limit reached. You can only generate 1 quiz. Upgrade to Admin for unlimited generations."
+                });
+            }
+        }
+
+
           const quiz = await quizService.createQuiz({
             userId: req.user._id,
             sourceDocumentId,

@@ -1,10 +1,21 @@
 import * as aiService from '../services/aiService.js';
+import Quiz from '../models/Quiz.model.js';
 
 export const generateQuestions = async (req, res) => {
     try {
         const { sourceDocumentId, questionCount, difficulty } = req.body;
 
         const userId = req.user._id;
+
+
+        if (req.user.role !== 'admin') {
+            const quizCount = await Quiz.countDocuments({ creatorId: userId });
+            if (quizCount >= 1) {
+                return res.status(403).json({
+                    message: "Free tier limit reached. You can only generate 1 quiz. Upgrade to Premium for unlimited generations."
+                });
+            }
+        }
 
         if (!sourceDocumentId) {
             return res.status(400).json({
@@ -22,13 +33,13 @@ export const generateQuestions = async (req, res) => {
 
         res.status(200).json({
             messsage: "Quiz Generated Successfully",
-            data:result
+            data: result
         });
 
 
     } catch (error) {
         console.error("AI Generation Error:", error.message);
-        
+
         // Map error to correct HTTP status
         let statusCode = 400;
         if (error.message.includes("Unauthorized")) statusCode = 403;
