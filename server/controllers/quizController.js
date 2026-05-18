@@ -16,7 +16,7 @@ export const createQuiz = async (req , res) => {
     }
 };
 
-export const getQuiz = async (req , res) => {
+export const getUserQuizzes = async (req , res) => {
     try {
         const quizzes = await quizService.getUserQuizzes(req.user._id)
         res.json(quizzes);

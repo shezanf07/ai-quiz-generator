@@ -166,7 +166,6 @@ const quizSchema = new Schema({
 quizSchema.index({ creatorId: 1, updatedAt: -1 });
 quizSchema.index({ sourceDocumentId: 1 });
 quizSchema.index({ aiGenerationId: 1 });
-quizSchema.index({ "share.shareId": 1 }, { unique: true, sparse: true });
 quizSchema.index({ status: 1 });
 
 export default mongoose.model("Quiz", quizSchema)
