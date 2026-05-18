@@ -52,14 +52,14 @@ export const processAndSaveDocument = async (userId, file, pastedText) => {
         throw new Error("No file or text provided");
     }
 
-    const cleanedText = extractedText.replace(/\s+/g, '').trim();
+    const cleanedText = extractedText.replace(/\s+/g, ' ').trim();
     const wordCount = cleanedText.split(' ').filter(word => word.length > 0).length;
 
-    if (wordCount === 0) {
+    if (wordCount < 10) {
         throw new Error("Document is too short to generate a meaningful quiz.");
     }
 
-    const sourceDoc = new SourceDocument.create({
+    const sourceDoc = await SourceDocument.create({
         creatorId: userId,
         sourceType,
         originalName,

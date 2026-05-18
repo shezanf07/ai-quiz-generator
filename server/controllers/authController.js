@@ -41,4 +41,34 @@ export const login = async (req, res) => {
     }
 
 
-}
+};
+
+
+export const googleLogin = async (req, res) => {
+    try {
+        const { idToken } = req.body;
+
+        if (!idToken) {
+            return res.status(400).json({ message: "Please provide a Google ID Token" });
+        }
+
+        // Delegate to service
+        const userData = await authService.loginWithGoogle(idToken);
+        res.json(userData);
+    } catch (error) {
+        console.error("Google Auth Error:", error.message);
+        const statusCode = error.message.includes("invalid") || error.message.includes("expired") ? 400 : 500;
+        res.status(statusCode).json({ message: error.message || "Server error during Google login" });
+    }
+};
+
+export const getConfig = async (req, res) => {
+    try {
+        res.json({
+            googleClientId: process.env.VITE_GOOGLE_CLIENT_ID || ""
+        });
+    } catch (error) {
+        console.error("Get Config Error:", error.message);
+        res.status(500).json({ message: "Server error retrieving config" });
+    }
+};

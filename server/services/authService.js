@@ -54,5 +54,56 @@ export const loginUser = async ({ email, password }) => {
     else {
         throw new Error('Invalid email or password');
     }
-}
+};
+
+export const loginWithGoogle = async (idToken) => {
+    const response = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${idToken}`);
+    
+    if (!response.ok) {
+        throw new Error("Invalid Google ID Token");
+    }
+
+    const payload = await response.json();
+    const { sub: googleId, email, name } = payload;
+
+    if (!email) {
+        throw new Error("Google account email is missing");
+    }
+
+    // Check if user already exists
+    let user = await User.findOne({ 
+        $or: [
+            { googleId: googleId },
+            { email: email.toLowerCase() }
+        ]
+    });
+
+    if (user) {
+        // Link googleId if they signed up via email earlier
+        if (!user.googleId) {
+            user.googleId = googleId;
+        }
+        if (user.authProvider !== 'google') {
+            user.authProvider = 'google';
+        }
+        user.lastLoginAt = new Date();
+        await user.save();
+    } else {
+        // Create new user for Google Sign-In
+        user = await User.create({
+            name: name || "Google User",
+            email: email.toLowerCase(),
+            authProvider: 'google',
+            googleId: googleId
+        });
+    }
+
+    return {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        token: generateToken(user._id),
+    };
+};
 

@@ -5,6 +5,7 @@ export const createQuiz = async ({ userId, sourceDocumentId, aiGenerationId, tit
 
     const processedQuestions = questions.map((q, index) => ({
         ...q,
+        questionText: q.questionText || q.question,
         number: index + 1,
         displayOrder: index
     }));
@@ -37,6 +38,7 @@ export const updateQuiz = async (quizId, userId, updates) => {
     if (updates.questions) {
         quiz.questions = updates.questions.map((q, index) => ({
             ...q,
+            questionText: q.questionText || q.question,
             number: index + 1,
             displayOrder: index
         }));
@@ -73,9 +75,9 @@ export const publishQuiz = async (quizId, userId, baseUrl, expiryOption = "24-ho
     quiz.expiresAt = expiresAt;
     quiz.share = {
         shareId,
-        shareUrl: `${baseUrl}/q/${shareId}`,
+        shareUrl: `${baseUrl}/quiz/${shareId}`,
         expiryOption,
-        qrValue: `${baseUrl}/q/${shareId}`
+        qrValue: `${baseUrl}/quiz/${shareId}`
     };
 
     await quiz.save();
