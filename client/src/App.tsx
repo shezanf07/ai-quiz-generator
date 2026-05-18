@@ -13,13 +13,14 @@ import QuizEditPage from "./pages/QuizEditPage"
 import CreaterLayout from "./layouts/CreaterLayout"
 import UploadPage from "./pages/UploadPage"
 import { useEffect } from "react"
+import { ProtectedRoute, PublicRoute } from './components/shared/ProtectedRoute';
 
 
 
 function App() {
 
 
-    useEffect(() => {
+  useEffect(() => {
     const savedTheme = localStorage.getItem("theme") || "light";
     if (savedTheme === "dark") {
       document.documentElement.classList.add("dark");
@@ -32,30 +33,28 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/register" element={<AuthPage />} />
-        <Route path="/login" element={<AuthPage />} />
-        <Route path="/dashboard" element={<DashboardPage />} />
-
-        <Route path="/quiz/:id" element={<QuizViewPage />} />
-        <Route path="/quiz/:id/results" element={<ResultPage />} />
+        <Route path="/terms" element={<TermsPage />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
 
 
-
-        <Route path="/create" element={<CreaterLayout />} >
-
-        <Route path="upload" element={<UploadPage />} />
-        <Route path="share" element={<ShareLinkPage />} />
-        <Route path="config" element={<QuizConfigPage/>}/>
-        <Route path="edit" element={<QuizEditPage />} />
-
+        <Route element={<PublicRoute />}>
+          <Route path="/login" element={<AuthPage />} />
+          <Route path="/register" element={<AuthPage />} />
         </Route>
 
 
-
-
-        <Route path="/privacy" element={<PrivacyPage />} />
-        <Route path="/terms" element={<TermsPage />} />
-        <Route path="/stats/:id" element={<StatsPage />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/create" element={<CreaterLayout />}>
+            <Route path="upload" element={<UploadPage />} />
+            <Route path="edit" element={<QuizEditPage />} />
+            <Route path="config" element={<QuizConfigPage />} />
+            <Route path="share" element={<ShareLinkPage />} />
+          </Route>
+          <Route path="/stats" element={<StatsPage />} />
+          <Route path="/quiz/:id" element={<QuizViewPage />} />
+          <Route path="/quiz/:id/results" element={<ResultPage />} />
+        </Route>
       </Routes>
     </>
   )
