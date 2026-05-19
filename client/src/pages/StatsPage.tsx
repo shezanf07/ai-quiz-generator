@@ -1,12 +1,41 @@
-import { ArrowLeft, Users, CheckCircle, BarChart } from "lucide-react";
-import { Link } from "react-router-dom";
+import { ArrowLeft, Users, CheckCircle, BarChart, Loader2 } from "lucide-react";
+import { Link, useSearchParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { attemptApi } from "../services/api";
+
 export default function StatsPage() {
-    const recentSubmissions = [
-        { name: "Alice Johnson", score: "92%", time: "12m 45s", status: "Passed", date: "Today, 10:23 AM" },
-        { name: "Bob Smith", score: "65%", time: "14m 10s", status: "Failed", date: "Today, 09:15 AM" },
-        { name: "Charlie Davis", score: "88%", time: "11m 30s", status: "Passed", date: "Yesterday, 04:45 PM" },
-        { name: "Diana Prince", score: "100%", time: "08m 20s", status: "Passed", date: "Yesterday, 02:10 PM" },
-    ];
+    const [searchParams] = useSearchParams();
+    const quizId = searchParams.get("id");
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [stats, setStats] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
+    const [errorMsg, setErrorMsg] = useState("");
+
+    useEffect(() => {
+        if (quizId) {
+            attemptApi.getAnalytics(quizId)
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                .then((data: any) => {
+                    setStats(data);
+                    setLoading(false);
+                })
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                .catch((err: any) => {
+                    setErrorMsg(err.message || "Failed to load statistics");
+                    setLoading(false);
+                });
+        } else {
+            setErrorMsg("Quiz ID is missing");
+            setLoading(false);
+        }
+    }, [quizId]);
+
+    if (loading) return <div className="flex-1 flex items-center justify-center min-h-screen"><Loader2 className="animate-spin text-primary" size={32} /></div>;
+    if (errorMsg || !stats) return <div className="flex-1 flex items-center justify-center min-h-screen text-red-400">{errorMsg || "Statistics not found"}</div>;
+
+    const { quizSummary, recentSubmissions } = stats;
+
     return (
         <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
 
@@ -24,7 +53,7 @@ export default function StatsPage() {
 
                 <div>
                     <h1 className="text-4xl md:text-5xl font-serif text-foreground mb-4">Quiz <span className="italic text-primary">Stats</span></h1>
-                    <p className="text-muted-foreground text-sm md:text-base">Modern Philosophy</p>
+                    <p className="text-muted-foreground text-sm md:text-base">{quizSummary.title}</p>
                 </div>
 
 
@@ -36,7 +65,7 @@ export default function StatsPage() {
                         </div>
                         <div>
                             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Total Submissions</p>
-                            <p className="text-3xl font-serif text-foreground">124</p>
+                            <p className="text-3xl font-serif text-foreground">{quizSummary.analytics.totalSubmissions}</p>
                         </div>
                     </div>
 
@@ -46,7 +75,7 @@ export default function StatsPage() {
                         </div>
                         <div>
                             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Pass Rate</p>
-                            <p className="text-3xl font-serif text-foreground">78%</p>
+                            <p className="text-3xl font-serif text-foreground">{Math.round(quizSummary.analytics.passRate)}%</p>
                         </div>
                     </div>
 
@@ -56,7 +85,7 @@ export default function StatsPage() {
                         </div>
                         <div>
                             <p className="text-[10px] font-bold text-primary uppercase tracking-widest mb-1">Avg Score</p>
-                            <p className="text-3xl font-serif text-foreground">84%</p>
+                            <p className="text-3xl font-serif text-foreground">{Math.round(quizSummary.analytics.averageScore)}%</p>
                         </div>
                     </div>
                 </div>
@@ -80,20 +109,28 @@ export default function StatsPage() {
                                 </tr>
                             </thead>
                             <tbody className="text-sm">
-                                {recentSubmissions.map((sub, idx) => (
-                                    <tr key={idx} className="border-b border-border/50 hover:bg-muted transition-colors">
-                                        <td className="p-5 text-foreground font-medium">{sub.name}</td>
-                                        <td className="p-5 text-primary font-serif font-bold text-lg">{sub.score}</td>
-                                        <td className="p-5 text-muted-foreground">{sub.time}</td>
-                                        <td className="p-5">
-                                            <span className={`px-2 py-1 rounded-[3px] text-[9px] font-bold tracking-widest uppercase ${sub.status === 'Passed' ? 'bg-[#3bb97e]/10 text-[#3bb97e] border border-[#3bb97e]/20' : 'bg-[#e57a7a]/10 text-[#e57a7a] border border-[#e57a7a]/20'
-                                                }`}>
-                                                {sub.status}
-                                            </span>
-                                        </td>
-                                        <td className="p-5 text-muted-foreground text-xs">{sub.date}</td>
+  
+                                {recentSubmissions.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={5} className="p-10 text-center text-muted-foreground">No submissions yet. Share your quiz to get started!</td>
                                     </tr>
-                                ))}
+                                ) : (
+
+                                    recentSubmissions.map((sub: any, idx: number) => (
+                                        <tr key={idx} className="border-b border-border/50 hover:bg-muted transition-colors">
+                                            <td className="p-5 text-foreground font-medium">{sub.name}</td>
+                                            <td className="p-5 text-primary font-serif font-bold text-lg">{sub.score}</td>
+                                            <td className="p-5 text-muted-foreground">{sub.time}</td>
+                                            <td className="p-5">
+                                                <span className={`px-2 py-1 rounded-[3px] text-[9px] font-bold tracking-widest uppercase ${sub.status === 'Passed' ? 'bg-[#3bb97e]/10 text-[#3bb97e] border border-[#3bb97e]/20' : 'bg-[#e57a7a]/10 text-[#e57a7a] border border-[#e57a7a]/20'
+                                                    }`}>
+                                                    {sub.status}
+                                                </span>
+                                            </td>
+                                            <td className="p-5 text-muted-foreground text-xs">{new Date(sub.date).toLocaleString()}</td>
+                                        </tr>
+                                    ))
+                                )}
                             </tbody>
                         </table>
                     </div>
@@ -105,7 +142,7 @@ export default function StatsPage() {
                     </div>
                 </div>
 
-                
+
 
             </main >
 
