@@ -1,24 +1,78 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { ArrowLeft, Check, Clock, Minus, Plus } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
+import { ArrowLeft, ArrowRight, Clock, Minus, Plus, Loader2 } from "lucide-react";
+import { quizApi } from "../services/api";
+import LoadingOverlay from "../components/shared/LoadingOverlay";
+
 
 export default function QuizConfigPage() {
 
-    const [selectedTheme, setSelectedTheme] = useState("dark-academic")
-    const [isTimerEnabled, setIsTimerEnabled] = useState(false)
-    const [duration, setDuration] = useState(5)
-    const [passingScore, setPassingScore] = useState(80)
+    const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
+    const quizId = searchParams.get("id");
+
+    const [selectedTheme, setSelectedTheme] = useState("dark-academic");
+    const [isTimerEnabled, setIsTimerEnabled] = useState(true);
+    const [duration, setDuration] = useState(15);
+    const [passingScore, setPassingScore] = useState(70);
     const [quizTitle, setQuizTitle] = useState("");
+    const [loading, setLoading] = useState(true);
+    const [publishing, setPublishing] = useState(false);
+
+    useEffect(() => {
+        if (quizId) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            quizApi.getById(quizId).then((data: any) => {
+                setQuizTitle(data.title || "");
+                if (data.theme) setSelectedTheme(data.theme);
+                if (data.settings) {
+                    setPassingScore(data.settings.passingScore || 70);
+                    setIsTimerEnabled(data.settings.timerEnabled ?? true);
+                    setDuration(data.settings.durationMinutes || 15);
+                }
+                setLoading(false);
+            }).catch(() => setLoading(false));
+        } else {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setLoading(false);
+        }
+    }, [quizId]);
+
+    const handlePublish = async () => {
+        if (!quizId) return;
+        setPublishing(true);
+        try {
+            await quizApi.update(quizId, {
+                title: quizTitle,
+                theme: selectedTheme,
+                settings: {
+                    timerEnabled: isTimerEnabled,
+                    durationMinutes: duration,
+                    passingScore
+                }
+            });
+
+            const pubQuiz = await quizApi.publish(quizId, { expiryOption: '7-days' });
+            navigate(`/create/share?id=${quizId}&url=${encodeURIComponent(pubQuiz.share.shareUrl)}`);
+        } catch (err) {
+            console.error(err);
+            setPublishing(false);
+        }
+    };
 
 
 
-    const themes = [
-        { id: "light", name: "Light", color: "#E2E8F0" },
-        { id: "dark-academic", name: "Dark Academic", color: "#0D1511" },
-        { id: "amber-glow", name: "Amber Glow", color: "linear-gradient(to bottom right, #B28228, #452b02)" },
-    ];
+    // const themes = [
+    //     { id: "light", name: "Light", color: "#E2E8F0" },
+    //     { id: "dark-academic", name: "Dark Academic", color: "#0D1511" },
+    //     { id: "amber-glow", name: "Amber Glow", color: "linear-gradient(to bottom right, #B28228, #452b02)" },
+    // ];
+
+    if (loading) return <div className="flex-1 flex items-center justify-center min-h-screen"><Loader2 className="animate-spin text-primary" size={32} /></div>;
+
     return (
         <div className="flex-1 w-full bg-background flex flex-col items-center pt-10 pb-36 overflow-y-auto px-4 z-0 font-sans">
+            <LoadingOverlay active={publishing} type="save" message="Publishing your custom quiz..." />
             <div className="w-full max-w-3xl mb-12 text-center md:text-left transition-all duration-300">
                 <h1 className="text-3xl md:text-4xl font-serif text-foreground mb-4">Configure your <span className="italic px-1">Quiz</span></h1>
                 <p className="text-muted-foreground text-[15px]">Set your quiz rules and preferences before publishing.</p>
@@ -29,7 +83,7 @@ export default function QuizConfigPage() {
                 {/* Theme Settings */}
 
 
-                <div className="w-full bg-card/40 backdrop-blur-sm border border-border rounded-xl p-8 shadow-xl transition-all duration-300">
+                {/* <div className="w-full bg-card/40 backdrop-blur-sm border border-border rounded-xl p-8 shadow-xl transition-all duration-300">
                     <h2 className="text-lg font-serif italic text-foreground mb-8 flex items-center gap-2">
                         <span className="w-6 h-px bg-primary"></span>
                         Visual Theme
@@ -72,7 +126,7 @@ export default function QuizConfigPage() {
                             </div>
                         ))}
                     </div>
-                </div>
+                </div> */}
 
                 {/* Timer Control */}
 
@@ -196,22 +250,24 @@ export default function QuizConfigPage() {
 
             {/* Controls */}
       <div className="fixed bottom-0 right-0 z-20 w-full bg-background/90 backdrop-blur-md border-t border-border flex items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4 md:px-12 md:py-5">
-        <Link to="/create/edit" className="flex items-center gap-1.5 sm:gap-2 text-muted-foreground hover:text-foreground transition-all text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.08em] sm:tracking-widest group shrink-0">
+        <Link to={quizId ? `/create/edit?id=${quizId}` : "/create/edit"} className="flex items-center gap-1.5 sm:gap-2 text-muted-foreground hover:text-foreground transition-all text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.08em] sm:tracking-widest group shrink-0">
           <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform sm:w-4 sm:h-4" />
           <span className="hidden xs:inline">Back to </span>Editor
         </Link>
-        <Link
-          to="/create/share"
+        <button
+          onClick={handlePublish}
+          disabled={publishing}
           className="flex items-center gap-2 bg-primary hover:bg-primary text-background font-bold uppercase rounded-sm transition-all shadow-lg active:scale-95 whitespace-nowrap
             text-[9px] tracking-[0.06em] px-3.5 py-2.5
             sm:text-[10px] sm:tracking-widest sm:px-6 sm:py-3
             md:text-[11px] md:tracking-[0.15em] md:px-8 md:py-3.5"
         >
-          Publish Quiz
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="sm:w-4 sm:h-4 md:w-4.5 md:h-4.5"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
-        </Link>
+          {publishing ? "Publishing..." : "Publish Quiz"}
+          <ArrowRight size={13} className="sm:w-4 sm:h-4 md:w-4.5 md:h-4.5" />
+        </button>
       </div>
-        </div>
+
+      </div>
 
     )
 }
