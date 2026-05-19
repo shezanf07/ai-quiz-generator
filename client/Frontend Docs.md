@@ -222,7 +222,3 @@ The frontend has a dark academic style with gold accents. Many page components u
 - The dashboard links published quizzes to `/stats?id=:quizId` and draft quizzes to `/create/config?id=:quizId`.
 
 ---
-
-## 10. File Comments Added
-
-Simple comments were added to the source files to explain what each file does. They are intentionally short and plain.

@@ -436,7 +436,3 @@ Analytics response:
 - `authService.generateToken` has a fallback secret, but `middleware/auth.js` verifies with `process.env.JWT_SECRET` only. In practice `JWT_SECRET` should always be set.
 
 ---
-
-## 10. File Comments Added
-
-Short comments were added to backend files explaining their purpose in simple language.

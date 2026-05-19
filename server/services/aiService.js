@@ -3,7 +3,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import AiGeneration from '../models/AiGeneration.model.js';
 import SourceDocument from '../models/SourceDocument.model.js';
 
-export const generateQuizQuestions = async ({ userId, sourceDocumentId, questionCount = 10, difficulty = 'medium' }) => {
+export const generateQuizQuestions = async ({ userId, sourceDocumentId, questionCount = 5, difficulty = 'easy' }) => {
     // Make sure the source exists and belongs to this creator.
     const sourceDoc = await SourceDocument.findById(sourceDocumentId);
     if (!sourceDoc) {
