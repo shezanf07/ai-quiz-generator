@@ -1,3 +1,4 @@
+// Option card. Students click this to choose an answer.
 import { clsx } from "clsx";
 
 interface OptionsCardProps {
@@ -9,6 +10,7 @@ interface OptionsCardProps {
 
 export default function OptionsCard({ letter, text, isSelected, onClick }: OptionsCardProps) {
     return (
+        // Button keeps the whole option clickable for students.
         <button
             onClick={onClick}
             className={clsx(
@@ -21,6 +23,7 @@ export default function OptionsCard({ letter, text, isSelected, onClick }: Optio
 
 
             {isSelected && (
+                // Light highlight behind the selected answer.
                 <div className="absolute inset-0 bg-linear-to-r from-primary/10 to-transparent pointer-events-none" />
             )}
 

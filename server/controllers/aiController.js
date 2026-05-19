@@ -1,3 +1,4 @@
+// AI controller. It asks the AI service to generate questions.
 import * as aiService from '../services/aiService.js';
 import Quiz from '../models/Quiz.model.js';
 
@@ -8,6 +9,7 @@ export const generateQuestions = async (req, res) => {
         const userId = req.user._id;
 
 
+        // Free creators are limited to one generated quiz.
         if (req.user.role !== 'admin') {
             const quizCount = await Quiz.countDocuments({ creatorId: userId });
             if (quizCount >= 1) {
@@ -22,6 +24,7 @@ export const generateQuestions = async (req, res) => {
                 message: "sourceDocumentId is required"
             });
         }
+        // Avoid very small or very large AI requests.
         const safeCount = Math.min(Math.max(Number(questionCount) || 10, 1), 50);
 
         const result = await aiService.generateQuizQuestions({

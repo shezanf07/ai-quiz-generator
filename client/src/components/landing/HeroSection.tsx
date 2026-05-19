@@ -1,3 +1,4 @@
+// Hero section for the landing page.
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -16,6 +17,7 @@ export default function HeroSection() {
         <p className="text-muted-foreground text-sm md:text-base max-w-md leading-relaxed">
           Upload any document and get a ready-to-share quiz in seconds. No manual question writing needed.
         </p>
+        {/* Primary action starts the creator flow. */}
         <Link
           to="/create/upload"
           className="group mt-2 sm:mt-4 inline-flex items-center justify-center gap-3 bg-primary hover:bg-primary-hover text-primary-foreground text-[11px] font-bold uppercase tracking-[0.15em] px-6 sm:px-8 py-3.5 sm:py-4 rounded-[3px] transition-colors cursor-pointer"

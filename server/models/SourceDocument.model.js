@@ -1,5 +1,7 @@
+// Source document model. Stores uploaded or pasted study material.
 import mongoose, { Schema } from "mongoose";
 
+// Stores extracted text before it is sent to AI.
 const sourceDocumentSchema = new Schema({
     creatorId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -32,6 +34,7 @@ const sourceDocumentSchema = new Schema({
     },
     storageProvider: {
         type: String,
+        // Current app keeps files in memory and saves text only.
         enum: ["local", "s3", "cloudinary", "none"],
         default: "none"
     },
@@ -80,6 +83,7 @@ const sourceDocumentSchema = new Schema({
 );
 
 
+// Common lookup indexes for owner, status and possible duplicate checks.
 sourceDocumentSchema.index({ creatorId: 1, createdAt: -1 });
 sourceDocumentSchema.index({ checksum: 1 });
 sourceDocumentSchema.index({ status: 1 });

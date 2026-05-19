@@ -1,5 +1,7 @@
+// User model. Stores creator accounts and login provider details.
 import mongoose , {Schema} from 'mongoose';
 
+// Creator account schema.
 const userSchema = new Schema({
         name: {
         type : String,
@@ -17,6 +19,7 @@ const userSchema = new Schema({
     },
     passwordHash: {
         type : String,
+        // Google users do not have a local password.
         required : function () {
             return this.authProvider === 'email';
         }
@@ -33,6 +36,7 @@ const userSchema = new Schema({
     },
     role: {
         type : String,
+        // Admin users bypass the free quiz limit.
         enum : ['creator', 'admin'],
         default : 'creator'
     },

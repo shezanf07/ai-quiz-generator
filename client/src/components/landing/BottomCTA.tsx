@@ -1,3 +1,4 @@
+// Bottom call-to-action section for the landing page.
 import { Link } from "react-router-dom";
 
 export default function BottomCTA() {
@@ -14,6 +15,7 @@ export default function BottomCTA() {
           Built for educators and students looking to simplify quiz creation and assessment workflows.
         </p>
         
+        {/* Link should send users into quiz creation from the bottom of the page. */}
         <Link 
           to="/upload" 
           className="mt-8 z-10 inline-block bg-primary hover:bg-primary-hover text-white text-[11px] font-bold uppercase tracking-[0.15em] px-10 py-4 rounded-[3px] transition-colors"

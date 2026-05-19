@@ -1,3 +1,4 @@
+// Share page. It shows the published quiz link and QR code.
 import { BookOpen, User } from "lucide-react";
 import { Link } from "react-router-dom";
 import ShareModal from "../components/quiz/ShareModal";
@@ -19,6 +20,7 @@ export default function ShareLinkPage() {
             </header>
 
 
+            {/* ShareModal reads the quiz id and link from the URL query string. */}
             <main className="flex-1 w-full flex flex-col items-center justify-center p-6 md:p-12 pb-24">
                 <ShareModal />
             </main>

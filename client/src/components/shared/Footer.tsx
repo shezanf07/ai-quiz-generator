@@ -1,7 +1,9 @@
+// Footer component for the landing and policy pages.
 import { Link } from "react-router-dom";
 
 export default function Footer() {
     return (
+        // Shared footer stays simple because it appears on public pages.
         <footer className="w-full px-6 md:px-12 py-10 bg-background mt-auto flex flex-col md:flex-row items-center justify-between gap-4">
       {/* Brand and copyright */}
       <div className="flex flex-col gap-2 items-center md:items-start">

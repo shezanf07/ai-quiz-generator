@@ -1,3 +1,4 @@
+// Login form. It signs in a creator and stores the token.
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import FormInput from "../shared/FormInput";
@@ -17,16 +18,19 @@ export default function LoginForm() {
         setErrorMsg("");
         setLoading(true);
 
+        // Read values directly from the submitted form.
         const formData = new FormData(e.currentTarget);
         const email = formData.get("email") as string;
         const password = formData.get("password") as string;
 
         try {
+            // Backend returns the token used by protected routes.
             const data = await authApi.login({ email, password });
             setAuthToken(data.token);
             localStorage.setItem('user_name', data.name || 'Scholar');
 
 
+            // Send user back to the page they tried to open, or dashboard.
             const from = (location.state as any)?.from;
             const redirectUrl = from ? `${from.pathname}${from.search || ''}` : "/dashboard";
             navigate(redirectUrl);

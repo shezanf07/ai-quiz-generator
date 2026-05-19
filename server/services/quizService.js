@@ -1,8 +1,10 @@
+// Quiz service. It creates, updates, publishes and lists quizzes.
 import Quiz from '../models/Quiz.model.js';
 import { nanoid } from 'nanoid';
 
 export const createQuiz = async ({ userId, sourceDocumentId, aiGenerationId, title, questions = [] }) => {
 
+    // AI returns "question", but the quiz editor expects "questionText".
     const processedQuestions = questions.map((q, index) => ({
         ...q,
         questionText: q.questionText || q.question,
@@ -24,6 +26,7 @@ export const createQuiz = async ({ userId, sourceDocumentId, aiGenerationId, tit
 };
 
 export const updateQuiz = async (quizId, userId, updates) => {
+    // Every edit is scoped to the logged-in creator.
     const quiz = await Quiz.findOne({ _id: quizId, creatorId: userId });
 
     if (!quiz) throw new Error("Quiz not found or unauthorized");
@@ -32,10 +35,12 @@ export const updateQuiz = async (quizId, userId, updates) => {
     if (updates.theme) quiz.theme = updates.theme;
 
     if (updates.settings) {
+        // Merge settings so missing fields keep their old values.
         quiz.settings = { ...quiz.settings, ...updates.settings };
     }
 
     if (updates.questions) {
+        // Re-number questions after edits.
         quiz.questions = updates.questions.map((q, index) => ({
             ...q,
             questionText: q.questionText || q.question,
@@ -54,12 +59,13 @@ export const publishQuiz = async (quizId, userId, baseUrl, expiryOption = "24-ho
     if (!quiz) throw new Error("Quiz not found or unauthorized");
 
     if (quiz.status === 'published' && quiz.share?.shareId) {
+        // Do not create a new link if the quiz is already published.
         return quiz;
     }
 
     const shareId = nanoid(8);
 
-
+    // Convert expiry option into an actual date.
     let expiresAt = null;
     const now = new Date();
     if (expiryOption === "24-hours") {
@@ -85,6 +91,7 @@ export const publishQuiz = async (quizId, userId, baseUrl, expiryOption = "24-ho
 };
 
 export const getUserQuizzes = async (userId) => {
+    // Dashboard needs only summary fields, not full quiz data.
     const quizzes = await Quiz.find({ creatorId: userId, status: { $ne: "archived" } })
         .sort({ updatedAt: -1 })
         .select("title type status questions updatedAt share analytics");

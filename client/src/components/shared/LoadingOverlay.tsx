@@ -1,3 +1,4 @@
+// Loading overlay. It shows blocking feedback during long actions.
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Loader2, Sparkles, BookOpen, GraduationCap } from "lucide-react";
@@ -40,6 +41,7 @@ export default function LoadingOverlay({ active, message, submessage, type = "ge
     if (!active) return;
     setTipIndex(0);
 
+    // Pick rotating tips based on the current long-running action.
     const tips = type === "ai" ? AI_TIPS : type === "save" ? SAVE_TIPS : type === "submit" ? SUBMIT_TIPS : [];
     if (tips.length === 0) return;
 
@@ -52,7 +54,7 @@ export default function LoadingOverlay({ active, message, submessage, type = "ge
 
   if (!active) return null;
 
-  // Resolve messages
+  // Resolve default messages when caller does not pass custom text.
   let displayMessage = message;
   let displaySubmessage = submessage;
 

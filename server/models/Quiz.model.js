@@ -1,5 +1,7 @@
+// Quiz model. Stores creator-approved questions, settings and share data.
 import mongoose, { Schema } from "mongoose";
 
+// MCQ option stored inside each quiz question.
 const optionsSchema = new Schema({
     id: {
         type: String,
@@ -16,6 +18,7 @@ const optionsSchema = new Schema({
 );
 
 const questionSchema = new Schema({
+    // number is shown to creators and students.
     number: {
         type: Number,
         required: true
@@ -52,6 +55,7 @@ const questionSchema = new Schema({
 );
 
 const quizSchema = new Schema({
+    // Owner of the quiz.
     creatorId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
@@ -86,6 +90,7 @@ const quizSchema = new Schema({
         default: []
     },
     settings: {
+        // Default quiz rules used when creator does not change config.
         timerEnabled: {
             type: Boolean,
             default: true
@@ -119,6 +124,7 @@ const quizSchema = new Schema({
         }
     },
     share: {
+        // Public link data is created when the quiz is published.
         shareId: {
             type: String,
             unique: true,
@@ -139,6 +145,7 @@ const quizSchema = new Schema({
         }
     },
     analytics: {
+        // Cached stats are updated after each submitted attempt.
         totalSubmissions: {
             type: Number,
             default: 0
@@ -163,6 +170,7 @@ const quizSchema = new Schema({
 );
 
 
+// Dashboard and public lookup indexes.
 quizSchema.index({ creatorId: 1, updatedAt: -1 });
 quizSchema.index({ sourceDocumentId: 1 });
 quizSchema.index({ aiGenerationId: 1 });

@@ -1,3 +1,4 @@
+// Quiz edit page. Creators review and edit generated questions.
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { Trash2, Sparkles, Check, ChevronLeft, ChevronRight, ArrowRight, Loader2 } from "lucide-react";
@@ -21,6 +22,7 @@ export default function QuizEditPage() {
 
     useEffect(() => {
         if (quizId) {
+            // Load the draft quiz created after AI generation.
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             quizApi.getById(quizId).then((data: any) => {
                 setQuiz(data);
@@ -38,6 +40,7 @@ export default function QuizEditPage() {
     const activeQuestion = questions[activeQuestionIdx] || null;
 
     const handleOptionChange = (optIndex: number, value: string) => {
+        // Update option text for the active question only.
         const updated = [...questions];
         updated[activeQuestionIdx].options[optIndex].text = value;
         setQuestions(updated);
@@ -62,6 +65,7 @@ export default function QuizEditPage() {
         if (!quizId) return;
         setSaving(true);
         try {
+            // Save edited questions before moving to quiz settings.
             await quizApi.update(quizId, { questions });
             navigate(`/create/config?id=${quizId}`);
         } catch (err) {

@@ -1,3 +1,4 @@
+// Main Express app setup. Middleware and API routes are connected here.
 import express from 'express';
 import cors from 'cors';
 import authRoutes from './routes/authRoutes.js';
@@ -8,6 +9,7 @@ import attemptRoutes from './routes/attemptRoutes.js';
 
 const app = express();
 
+// Keep CORS strict, but allow local dev and the deployed client URL.
 const allowedOrigins = [
     'http://localhost:5173',
     process.env.CLIENT_URL,
@@ -30,7 +32,7 @@ app.use(cors({
 
 app.use(express.json());
 
-// Routes
+// API route groups.
 app.use('/api/auth', authRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/ai', aiRoutes);
@@ -38,6 +40,7 @@ app.use('/api/quizzes', quizRoutes);
 app.use('/api/attempts', attemptRoutes);
 
 app.get('/', (req, res) => {
+    // Small health check for browser or Postman testing.
     res.json({ message: "Server is running Successfully" });
 });
 

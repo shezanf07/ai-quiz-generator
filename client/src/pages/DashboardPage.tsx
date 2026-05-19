@@ -1,3 +1,4 @@
+// Dashboard page. Creators can see their quizzes and start a new one.
 import { Link, useNavigate } from "react-router-dom";
 import { BookOpen, User, Plus, Clock, FileText, Loader2, LogOut } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -14,6 +15,7 @@ export default function DashboardPage() {
 
 
     useEffect(() => {
+        // Load dashboard cards for the logged-in creator.
         quizApi.getAll()
 
             .then((data: any) => {
@@ -27,6 +29,7 @@ export default function DashboardPage() {
     }, []);
 
     const handleLogout = () => {
+        // Show a short overlay so logout feels intentional.
         setLoggingOut(true);
         setTimeout(() => {
             removeAuthToken();
@@ -74,6 +77,7 @@ export default function DashboardPage() {
 
 
 
+                {/* Empty state when creator has no saved quizzes yet */}
                 {loading ? (
                     <div className="flex justify-center py-20">
                         <Loader2 className="animate-spin text-primary" size={40} />

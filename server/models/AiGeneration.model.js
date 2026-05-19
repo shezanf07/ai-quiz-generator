@@ -1,5 +1,7 @@
+// AI generation model. Stores the generated questions and AI status.
 import mongoose , {Schema} from 'mongoose';
 
+// Option shape expected from the AI response.
 const generatedOptionsSchema = new Schema({
     id: {
         type: String,
@@ -15,6 +17,7 @@ const generatedOptionsSchema = new Schema({
 );
 
 const generatedQuestionSchema = new Schema({
+    // Gemini returns this as "question"; quiz service later maps it to questionText.
     question: {
         type: String,
         required: true
@@ -42,6 +45,7 @@ const generatedQuestionSchema = new Schema({
 );
 
 const aiGenerationSchema = new Schema({
+    // Tracks who requested this generation.
     creatorId : {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -85,6 +89,7 @@ const aiGenerationSchema = new Schema({
     },
     status: {
         type: String,
+        // completed means the JSON was parsed and saved.
         enum: ['pending', 'completed', 'failed'],
         default: 'pending'
     },
@@ -110,6 +115,7 @@ const aiGenerationSchema = new Schema({
     {timestamps: true}
 );
 
+// These indexes help if generation history grows later.
 aiGenerationSchema.index({ creatorId: 1, createdAt: -1 });
 aiGenerationSchema.index({ sourceDocumentId: 1 });
 aiGenerationSchema.index({ quizId: 1 });

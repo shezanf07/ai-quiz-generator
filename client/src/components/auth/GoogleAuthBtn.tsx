@@ -1,3 +1,4 @@
+// Google auth button. It renders Google Sign-In when a client id is available.
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { authApi, setAuthToken } from "../../services/api";
@@ -14,6 +15,7 @@ export default function GoogleOAuthBtn() {
     try {
       setLoading(true);
       setError("");
+      // Google returns the credential token in this callback.
       const idToken = response.credential;
       const data = await authApi.googleLogin({ idToken });
       
@@ -33,6 +35,7 @@ export default function GoogleOAuthBtn() {
   const [clientId, setClientId] = useState("");
 
   useEffect(() => {
+    // Client id is served by backend so it stays configurable.
     authApi.getConfig()
       .then((data: any) => {
         if (data.googleClientId) {
@@ -41,6 +44,7 @@ export default function GoogleOAuthBtn() {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const google = (window as any).google;
           if (google && google.accounts) {
+            // Render the official Google button into the placeholder div.
             google.accounts.id.initialize({
               client_id: data.googleClientId,
               callback: handleCredentialResponse

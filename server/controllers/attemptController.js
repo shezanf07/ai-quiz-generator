@@ -1,8 +1,10 @@
+// Attempt controller. It handles public submissions and quiz stats.
 import * as attemptService from '../services/attemptService.js';
 
 
 export const getPublicQuiz = async (req, res) => {
     try {
+        // Public quiz data hides the correct answers.
         const quiz = await attemptService.getPublicQuiz(req.params.shareId);
         res.json(quiz);
     } catch (error) {
@@ -16,6 +18,7 @@ export const submitAttempt = async (req, res) => {
     try {
         const { participant, answers, timeTakenSeconds } = req.body;
         
+        // Answers must be an array so the service can grade them.
         if (!answers || !Array.isArray(answers)) {
             return res.status(400).json({ message: "Invalid answers format." });
         }
@@ -36,6 +39,7 @@ export const submitAttempt = async (req, res) => {
 
 export const getQuizAnalytics = async (req, res) => {
     try {
+        // Analytics are protected so only the creator can see them.
         const analytics = await attemptService.getQuizAnalytics(req.params.quizId, req.user._id);
         res.json(analytics);
     } catch (error) {

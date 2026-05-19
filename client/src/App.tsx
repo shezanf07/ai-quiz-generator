@@ -1,3 +1,4 @@
+// Main route file. It connects public pages and protected creator pages.
 import AuthPage from "./pages/AuthPage"
 import LandingPage from "./pages/LandingPage"
 import { Routes, Route } from "react-router-dom"
@@ -21,6 +22,7 @@ function App() {
 
 
   useEffect(() => {
+    // Apply saved theme before the main routes render.
     const savedTheme = localStorage.getItem("theme") || "light";
     if (savedTheme === "dark") {
       document.documentElement.classList.add("dark");
@@ -32,17 +34,20 @@ function App() {
   return (
     <>
       <Routes>
+        {/* Public pages */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
 
 
+        {/* Auth pages should not be shown after login */}
         <Route element={<PublicRoute />}>
           <Route path="/login" element={<AuthPage />} />
           <Route path="/register" element={<AuthPage />} />
         </Route>
 
 
+        {/* Creator and quiz pages require a token in the current app */}
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/create" element={<CreaterLayout />}>

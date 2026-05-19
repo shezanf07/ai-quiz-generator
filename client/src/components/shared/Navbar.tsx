@@ -1,3 +1,4 @@
+// Landing navbar. It holds the brand, theme toggle and auth links.
 import { BookOpen, User, LogOut } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -11,11 +12,13 @@ export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
 
+  // Navbar reads token once when it mounts.
   useEffect(() => {
     setIsLoggedIn(!!getAuthToken());
   }, []);
 
   const handleLogout = () => {
+    // Logout is local only: clear token and return home.
     setLoggingOut(true);
     setTimeout(() => {
       removeAuthToken();

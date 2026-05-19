@@ -1,3 +1,4 @@
+// Landing page. It combines the marketing sections shown on the home page.
 import BottomCTA from "../components/landing/BottomCTA";
 import FeatureCards from "../components/landing/FeatureCards";
 import HeroSection from "../components/landing/HeroSection";
@@ -14,6 +15,7 @@ export default function LandingPage() {
 
 
       <main className="flex-1 w-full flex flex-col items-center">
+        {/* Public marketing page sections */}
 
         <HeroSection />
 

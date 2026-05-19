@@ -1,3 +1,4 @@
+// How it works section for the landing page.
 import { UploadCloud, Cpu, Edit2, Share2 } from "lucide-react";
 
 // Landing page workflow steps

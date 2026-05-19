@@ -1,3 +1,4 @@
+// Result page. It shows score, pass status and answer review after submit.
 import { Link, useLocation, useParams } from "react-router-dom";
 import { BookOpen, Check, X } from "lucide-react";
 import ReviewCard from "../components/quiz/ReviewCard";
@@ -11,6 +12,7 @@ export default function ResultsPage() {
         return <div className="flex justify-center mt-20">No results found.</div>;
     }
 
+    // Convert backend result rows into ReviewCard props.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const reviews = result.results.map((r: any, index: number) => ({
         number: String(index + 1).padStart(2, "0"),
@@ -20,6 +22,7 @@ export default function ResultsPage() {
         correctOption: r.correctOptionText
     }));
 
+    // Circle progress uses the SVG stroke offset.
     const passOffset = 477 - (477 * (result.percentage / 100));
 
     return (

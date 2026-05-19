@@ -1,3 +1,4 @@
+// Share modal. It displays the public link, QR code and related actions.
 import { Check, Download, ArrowLeft, BarChart2, Calendar, Copy } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 import { QRCodeSVG } from "qrcode.react";
@@ -10,6 +11,7 @@ export default function ShareModal() {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
+    // Copy link and briefly change the button label.
     navigator.clipboard.writeText(shareUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -94,6 +96,7 @@ export default function ShareModal() {
         <div className="flex items-center gap-3 bg-card border border-border px-4 py-3 rounded-md w-full sm:w-auto">
           <Calendar size={14} className="text-primary" />
           <span className="text-xs text-muted-foreground font-medium mr-2">Expires:</span>
+          {/* This dropdown is visual right now; publish already set the expiry. */}
           <select className="bg-transparent border-none text-foreground text-sm font-bold outline-none cursor-pointer pr-4 appearance-none">
             <option className="bg-card">30 Days</option>
             <option className="bg-card">7 Days</option>

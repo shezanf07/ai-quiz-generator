@@ -1,3 +1,4 @@
+// Creator layout. It shows the quiz creation stepper and nested pages.
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { BookOpen, User } from "lucide-react";
 
@@ -6,6 +7,7 @@ export default function CreaterLayout() {
     const location = useLocation();
     const path = location.pathname;
 
+    // These steps match the nested create routes.
     const steps = [
         { number: 1, label: "UPLOAD", path: "/create/upload" },
         { number: 2, label: "EDIT", path: "/create/edit" },
@@ -13,6 +15,7 @@ export default function CreaterLayout() {
         { number: 4, label: "PUBLISH", path: "/create/share" }
     ];
 
+    // Used to highlight the current step in the header.
     const currentStep = steps.findIndex(s => s.path === path) + 1 || 0;
 
 

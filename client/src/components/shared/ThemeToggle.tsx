@@ -1,3 +1,4 @@
+// Theme toggle. It switches light and dark mode in localStorage.
 import { Sun , Moon } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -17,6 +18,7 @@ export default function ThemeToggle() {
 }, [theme]);
 
 const toggleTheme = () => {
+    // Flip between the two saved theme values.
     setTheme(theme === "dark" ? "light" : "dark");
 }
 

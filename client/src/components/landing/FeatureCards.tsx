@@ -1,3 +1,4 @@
+// Feature cards section for the landing page.
 import { Sparkles, Edit3, Link as LinkIcon } from "lucide-react";
 
 export default function FeatureCards() {
@@ -19,6 +20,7 @@ export default function FeatureCards() {
                         alt="Antique fountain pen on leather manuscript"
                         className="w-full h-full object-cover rounded-md"
                         onError={(e) => {
+                            // Fallback keeps the card useful if the local image is missing.
                             (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&q=80&w=800";
                         }}
                     />

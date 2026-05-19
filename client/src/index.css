@@ -1,7 +1,9 @@
+/* Global CSS. Theme variables and shared utility styles live here. */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
 @import "tailwindcss";
 
 :root {
+  /* Light theme colors */
   --background: #f4f0e6;
   --foreground: #1c2321;
   --primary: #c2912e;
@@ -15,6 +17,7 @@
 }
 
 .dark {
+  /* Dark theme colors */
   --background: #0d1511;
   --foreground: #f2ebd9;
   --primary: #c69b35;
@@ -28,6 +31,7 @@
 }
 
 @theme inline {
+  /* Map CSS variables into Tailwind v4 theme tokens */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);

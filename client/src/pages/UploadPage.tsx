@@ -1,3 +1,4 @@
+// Upload page. It uploads source material and starts AI quiz generation.
 import { UploadCloud, FileText, X, CheckCircle, Loader2, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useRef } from "react";
@@ -16,6 +17,7 @@ export default function UploadPage() {
   const [errorMsg, setErrorMsg] = useState("");
 
   const handleFileUpload = async (file: File) => {
+    // Upload immediately after the user picks a file.
     setFileStatus('uploading');
     setFileName(file.name);
     setErrorMsg("");
@@ -40,6 +42,7 @@ export default function UploadPage() {
     let currentSourceId = sourceId;
     
     try {
+      // Text input is uploaded here because there is no file change event.
       setFileStatus('generating');
       setErrorMsg("");
 
@@ -54,6 +57,7 @@ export default function UploadPage() {
       }
 
 
+      // AI generation returns questions, then we save them as a draft quiz.
       const aiData = await aiApi.generateQuiz({ sourceDocumentId: currentSourceId, questionCount: 10, difficulty: "medium" });
       
 
@@ -93,6 +97,7 @@ export default function UploadPage() {
       <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 flex-1 items-start">
 
 
+        {/* File upload side */}
         <div className="flex-1 flex flex-col gap-6 w-full">
           <input 
             type="file" 
@@ -188,6 +193,7 @@ export default function UploadPage() {
         </div>
 
 
+        {/* Plain text side */}
         <div className="w-full lg:w-100 xl:w-120 bg-card border border-border rounded-2xl flex flex-col overflow-hidden shadow-xl h-75 md:h-100 lg:sticky lg:top-24 focus-within:border-primary/30 transition-colors">
           <div className="p-4 md:p-5 border-b border-border flex justify-between items-center bg-muted">
             <h3 className="font-serif text-foreground text-base md:text-lg">Paste Plain Text</h3>

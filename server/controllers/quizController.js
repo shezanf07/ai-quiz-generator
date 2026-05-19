@@ -1,3 +1,4 @@
+// Quiz controller. It handles creator quiz actions.
 import * as quizService from '../services/quizService.js'
 import Quiz from '../models/Quiz.model.js';
 
@@ -5,6 +6,7 @@ export const createQuiz = async (req , res) => {
     try {
         const {sourceDocumentId , aiGenerationId , title , questions } = req.body;
 
+        // Same free-tier limit as AI generation.
         if (req.user.role !== 'admin') {
             const quizCount = await Quiz.countDocuments({ creatorId: req.user._id });
             if (quizCount >= 1) {
@@ -13,8 +15,7 @@ export const createQuiz = async (req , res) => {
                 });
             }
         }
-
-
+          // Service normalizes AI question fields before saving.
           const quiz = await quizService.createQuiz({
             userId: req.user._id,
             sourceDocumentId,
@@ -30,6 +31,7 @@ export const createQuiz = async (req , res) => {
 
 export const getUserQuizzes = async (req , res) => {
     try {
+        // Dashboard only shows quizzes owned by the logged-in creator.
         const quizzes = await quizService.getUserQuizzes(req.user._id)
         res.json(quizzes);
     } catch (error) {
@@ -58,7 +60,7 @@ export const updateQuiz = async (req, res) => {
 export const publishQuiz = async (req, res) => {
     try {
         const { expiryOption } = req.body;
-        // Determine base URL dynamically or from env
+        // Use frontend URL first, then fallback to the request origin.
         const baseUrl = process.env.FRONTEND_URL || req.headers.origin || `http://${req.headers.host}`;
         const quiz = await quizService.publishQuiz(req.params.id, req.user._id, baseUrl, expiryOption);
         res.json(quiz);

@@ -1,3 +1,4 @@
+// Auth page. It switches between login and register by route.
 import AuthLayout from "../layouts/AuthLayout";
 import { Link, useLocation } from "react-router-dom";
 import LoginForm from "../components/auth/LoginForm";
@@ -6,6 +7,7 @@ import RegisterForm from "../components/auth/RegisterForm";
 
 export default function () {
     const location = useLocation();
+    // Same page is reused for both auth routes.
     const isLogin = location.pathname === "/login";
     return (
         <AuthLayout>

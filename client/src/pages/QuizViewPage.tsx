@@ -1,3 +1,4 @@
+// Student quiz page. It loads the public quiz and submits answers.
 import { useState, useEffect, useRef } from "react";
 import { BookOpen, Timer, ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 import { Link, useParams, useNavigate } from "react-router-dom";
@@ -32,6 +33,7 @@ export default function QuizViewPage() {
 
     useEffect(() => {
         if (id) {
+            // The route id is the public share id.
             attemptApi.getPublicQuiz(id)
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 .then((data: any) => {
@@ -50,6 +52,7 @@ export default function QuizViewPage() {
 
     useEffect(() => {
         if (quiz) {
+            // Timer starts only after quiz data is loaded.
             if (quiz.settings?.timerEnabled) {
                 const duration = (quiz.settings.durationMinutes || 15) * 60;
                 setTimeLeft(duration);
@@ -63,9 +66,10 @@ export default function QuizViewPage() {
         if (submitting) return;
         setSubmitting(true);
         try {
-            // Calculate total time taken in seconds
+            // Calculate total time taken in seconds.
             const totalTimeTakenSeconds = Math.max(1, Math.floor((Date.now() - startTimeRef.current) / 1000));
 
+            // Convert local answer map into the backend submit format.
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const payload = quiz.questions.map((q: any) => ({
                 questionId: q._id,
@@ -91,6 +95,7 @@ export default function QuizViewPage() {
     useEffect(() => {
         if (timeLeft === null) return;
         if (timeLeft <= 0) {
+            // Auto-submit when timer finishes.
             submitQuiz();
             return;
         }
@@ -177,6 +182,7 @@ export default function QuizViewPage() {
 
                     <div className="flex flex-col gap-4">
 
+                        {/* Answer options */}
                         {currentQuestion.options.map((opt: any, idx: number) => {
                             const letter = String.fromCharCode(65 + idx);
                             return (

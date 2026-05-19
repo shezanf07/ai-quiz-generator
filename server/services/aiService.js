@@ -1,8 +1,10 @@
+// AI service. It sends cleaned source text to Gemini and stores the result.
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import AiGeneration from '../models/AiGeneration.model.js';
 import SourceDocument from '../models/SourceDocument.model.js';
 
 export const generateQuizQuestions = async ({ userId, sourceDocumentId, questionCount = 10, difficulty = 'medium' }) => {
+    // Make sure the source exists and belongs to this creator.
     const sourceDoc = await SourceDocument.findById(sourceDocumentId);
     if (!sourceDoc) {
         throw new Error('Source document not found');
@@ -18,7 +20,7 @@ export const generateQuizQuestions = async ({ userId, sourceDocumentId, question
         throw new Error("Source document has insufficient text for generation");
     }
 
-    // Initalize the Google Generative AI client
+    // Initialize the Google Generative AI client.
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
     const model = genAI.getGenerativeModel({
@@ -52,7 +54,7 @@ export const generateQuizQuestions = async ({ userId, sourceDocumentId, question
     ${textToAnalyze.substring(0, 30000)} // Limiting to ~30k characters to prevent massive payload issues
     ---
     `;
-
+    // Save a pending generation before calling the AI provider.
     const aiGeneration = await AiGeneration.create({
         creatorId: userId,
         sourceDocumentId: sourceDoc._id,
@@ -72,6 +74,7 @@ export const generateQuizQuestions = async ({ userId, sourceDocumentId, question
         let generatedQuestions;
 
         try {
+            // Gemini is instructed to return raw JSON, so parse it directly.
             generatedQuestions = JSON.parse(responseText);
         } catch (parseError) {
             console.error("Raw Gemini output:", responseText);
@@ -82,6 +85,7 @@ export const generateQuizQuestions = async ({ userId, sourceDocumentId, question
             throw new Error("AI did not return an array");
         }
 
+        // Store successful output for history and debugging.
         aiGeneration.generatedQuestions = generatedQuestions;
         aiGeneration.status = 'completed';
         await aiGeneration.save();
@@ -93,6 +97,7 @@ export const generateQuizQuestions = async ({ userId, sourceDocumentId, question
         };
 
     } catch (error) {
+        // Keep failed AI output status in the database.
         aiGeneration.status = 'failed';
         aiGeneration.errorMessage = error.message;
         await aiGeneration.save();

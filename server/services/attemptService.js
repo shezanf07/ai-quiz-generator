@@ -1,3 +1,4 @@
+// Attempt service. It hides answers before the quiz and grades submissions.
 import Quiz from '../models/Quiz.model.js';
 import Attempt from '../models/Attempt.model.js';
 
@@ -8,12 +9,12 @@ export const getPublicQuiz = async (shareId) => {
         throw new Error("Quiz not found or no longer available.");
     }
 
-    // Check expiry
+    // Check expiry.
     if (quiz.expiresAt && new Date() > quiz.expiresAt) {
         throw new Error("This quiz link has expired.");
     }
 
-
+    // Remove correct answers before sending quiz to students.
     const safeQuestions = quiz.questions.map(q => ({
         _id: q._id,
         number: q.number,
@@ -52,6 +53,7 @@ export const submitAttempt = async (shareId, participantData, answers, timeTaken
     let correctCount = 0;
     const gradedAnswers = [];
 
+    // Map questions once so answer grading is simple.
     const questionMap = new Map();
     quiz.questions.forEach(q => {
         questionMap.set(q._id.toString(), q);
@@ -64,7 +66,7 @@ export const submitAttempt = async (shareId, participantData, answers, timeTaken
         const isCorrect = submittedAnswer.selectedOptionId === actualQuestion.correctOptionId;
         if (isCorrect) correctCount++;
 
-        // Get option text for record keeping
+        // Get option text for record keeping.
         const selectedOpt = actualQuestion.options.find(o => o.id === submittedAnswer.selectedOptionId);
         const correctOpt = actualQuestion.options.find(o => o.id === actualQuestion.correctOptionId);
 
@@ -84,6 +86,7 @@ export const submitAttempt = async (shareId, participantData, answers, timeTaken
     const percentage = totalQuestions > 0 ? (correctCount / totalQuestions) * 100 : 0;
     const passed = percentage >= (quiz.settings?.passingScore || 70);
 
+    // Save the final attempt after grading.
     const attempt = await Attempt.create({
         quizId: quiz._id,
         shareId: shareId,
@@ -103,6 +106,7 @@ export const submitAttempt = async (shareId, participantData, answers, timeTaken
 
     quiz.analytics.totalSubmissions += 1;
 
+    // Update cached analytics so stats page stays fast.
     const prevTotal = quiz.analytics.totalSubmissions - 1;
     const currentTotal = quiz.analytics.totalSubmissions;
 
@@ -116,10 +120,11 @@ export const submitAttempt = async (shareId, participantData, answers, timeTaken
 
 export const getQuizAnalytics = async (quizId, userId) => {
 
+    // Make sure the stats request belongs to the quiz creator.
     const quiz = await Quiz.findOne({ _id: quizId, creatorId: userId });
     if (!quiz) throw new Error("Quiz not found or unauthorized");
 
-
+    // Latest submitted attempts are shown in the stats table.
     const attempts = await Attempt.find({ quizId: quiz._id, status: "submitted" })
         .sort({ submittedAt: -1 })
         .limit(100);

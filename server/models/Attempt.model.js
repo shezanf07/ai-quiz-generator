@@ -1,5 +1,7 @@
+// Attempt model. Stores student answers, score and final result.
 import mongoose, { Schema } from "mongoose";
 
+// One answer record saved after grading.
 const answerSchema = new Schema({
     questionId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -35,6 +37,7 @@ const answerSchema = new Schema({
 );
 
 const attemptSchema = new Schema({
+    // Attempt always belongs to a published quiz.
     quizId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Quiz",
@@ -45,6 +48,7 @@ const attemptSchema = new Schema({
         required: true
     },
     participant: {
+        // Student details are light because login is not required by the backend.
         name: {
             type: String,
             default: "Anonymous"
@@ -80,6 +84,7 @@ const attemptSchema = new Schema({
     },
     status: {
         type: String,
+        // Current flow saves submitted attempts directly.
         enum: ["in_progress", "submitted", "expired"],
         default: "in_progress"
     },
@@ -95,6 +100,7 @@ const attemptSchema = new Schema({
 );
 
 
+// Stats page reads recent submitted attempts by quiz.
 attemptSchema.index({ quizId: 1, submittedAt: -1 });
 attemptSchema.index({ shareId: 1 });
 attemptSchema.index({ status: 1 });

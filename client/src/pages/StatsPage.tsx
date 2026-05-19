@@ -1,3 +1,4 @@
+// Stats page. It shows analytics and recent submissions for one quiz.
 import { ArrowLeft, Users, CheckCircle, BarChart, Loader2 } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -14,6 +15,7 @@ export default function StatsPage() {
 
     useEffect(() => {
         if (quizId) {
+            // Stats are loaded from the protected analytics endpoint.
             attemptApi.getAnalytics(quizId)
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 .then((data: any) => {
@@ -58,6 +60,7 @@ export default function StatsPage() {
 
 
 
+                {/* Summary cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="bg-card border border-border p-6 rounded-xl flex items-center gap-6 shadow-sm hover:border-border/80 transition-colors">
                         <div className="w-12 h-12 rounded-full bg-muted text-muted-foreground flex items-center justify-center border border-border">
@@ -92,6 +95,7 @@ export default function StatsPage() {
 
 
 
+                {/* Recent submissions table */}
                 <div className="bg-card border border-border rounded-xl overflow-hidden shadow-2xl">
                     <div className="p-6 border-b border-border">
                         <h3 className="text-xl font-serif text-foreground">Recent Submissions</h3>

@@ -1,3 +1,4 @@
+// Shared input field. It also handles password show and hide.
 import { useState , forwardRef } from "react";
 import { EyeOff , Eye } from "lucide-react";
 import type { InputHTMLAttributes , ReactNode } from "react";
@@ -13,6 +14,7 @@ const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
         const [showPassword, setShowPassword] = useState(false);
         const isPassword = type === "password";
 
+        // Password fields can switch between hidden and visible text.
         const inputType = isPassword && showPassword ? "text" : type;
 
         return (

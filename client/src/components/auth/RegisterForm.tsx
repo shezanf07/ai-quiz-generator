@@ -1,3 +1,4 @@
+// Register form. It creates a new creator account.
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import FormInput from "../shared/FormInput";
@@ -21,12 +22,14 @@ export default function RegisterForm() {
         const password = formData.get("password") as string;
         const confirmPassword = formData.get("confirmPassword") as string;
 
+        // Quick client-side check before calling the backend.
         if (password !== confirmPassword) {
             return setError("Passwords do not match");
         }
 
         setLoading(true);
         try {
+            // Register also logs the creator in.
             const data = await authApi.register({ name, email, password });
             setAuthToken(data.token);
             localStorage.setItem('user_name', data.name || 'Scholar');

@@ -1,3 +1,4 @@
+// Auth layout. It wraps login and register forms with the brand panel.
 import { BookOpen, CheckCircle2 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -41,6 +42,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             </div>
 
 
+            {/* Form area */}
             <div className="flex-[1.2] lg:flex-1 bg-card flex flex-col justify-center px-6 sm:px-12 md:px-24 py-12 overflow-y-auto">
                 {children}
             </div>

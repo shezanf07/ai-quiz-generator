@@ -1,3 +1,4 @@
+// Quiz config page. Creators set title, timer and passing score before publish.
 import { useEffect, useState } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Clock, Minus, Plus, Loader2 } from "lucide-react";
@@ -21,6 +22,7 @@ export default function QuizConfigPage() {
 
     useEffect(() => {
         if (quizId) {
+            // Load current quiz settings so editing a draft keeps old values.
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             quizApi.getById(quizId).then((data: any) => {
                 setQuizTitle(data.title || "");
@@ -42,6 +44,7 @@ export default function QuizConfigPage() {
         if (!quizId) return;
         setPublishing(true);
         try {
+            // Save config first, then publish the quiz link.
             await quizApi.update(quizId, {
                 title: quizTitle,
                 theme: selectedTheme,
@@ -132,6 +135,7 @@ export default function QuizConfigPage() {
 
 
 
+                {/* Timer settings */}
                 <div className={`w-full bg-card/40 backdrop-blur-sm border rounded-xl p-8 shadow-xl transition-all duration-500
           ${isTimerEnabled ? "border-border" : "border-border/50 opacity-80"}`}>
                     <div className="flex items-start justify-between mb-8">

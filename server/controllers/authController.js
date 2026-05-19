@@ -1,9 +1,11 @@
+// Auth controller. It checks request data and sends auth responses.
 import * as authService from '../services/authService.js';
 
 export const register = async (req, res) => {
     try {
         const { name, email, password } = req.body;
 
+        // Basic required field check before calling the service.
         if (!name || !email || !password) {
             return res.status(400).json({ message: "Please provide all required fields" })
         }
@@ -26,6 +28,7 @@ export const login = async (req, res) => {
 
         const { email, password } = req.body;
 
+        // Login needs both fields to verify the user.
         if (!email || !password) {
             return res.status(400).json({ message: "Please provide email and password" });
         }
@@ -48,6 +51,7 @@ export const googleLogin = async (req, res) => {
     try {
         const { idToken } = req.body;
 
+        // Google sends this token from the frontend button.
         if (!idToken) {
             return res.status(400).json({ message: "Please provide a Google ID Token" });
         }
@@ -64,6 +68,7 @@ export const googleLogin = async (req, res) => {
 
 export const getConfig = async (req, res) => {
     try {
+        // Frontend reads this before rendering the Google button.
         res.json({
             googleClientId: process.env.VITE_GOOGLE_CLIENT_ID || ""
         });
