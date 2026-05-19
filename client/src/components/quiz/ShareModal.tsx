@@ -1,9 +1,20 @@
-import { Check, Download, ArrowLeft, BarChart2, Calendar } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Check, Download, ArrowLeft, BarChart2, Calendar, Copy } from "lucide-react";
+import { Link, useSearchParams } from "react-router-dom";
 import { QRCodeSVG } from "qrcode.react";
+import { useState } from "react";
 
 export default function ShareModal() {
-  const shareUrl = "https://quizly.app/q/50%-123";
+  const [searchParams] = useSearchParams();
+  const shareUrl = searchParams.get('url') || "https://quizly.app/q/placeholder";
+  const quizId = searchParams.get('id') || "";
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(shareUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
 
   return (
     <div className="w-full max-w-2xl flex flex-col items-center gap-6 sm:gap-8">
@@ -35,8 +46,9 @@ export default function ShareModal() {
             value={shareUrl}
             className="flex-1 w-full md:w-auto bg-transparent border-none text-[15px] text-foreground px-4 py-2 md:py-0 outline-none selection:bg-primary/30 truncate"
           />
-          <button className="w-full md:w-auto bg-primary hover:bg-primary-hover text-background text-[11px] font-bold uppercase tracking-widest px-8 py-3.5 rounded-[3px] transition-colors whitespace-nowrap">
-            Copy Link
+          <button onClick={handleCopy} className="w-full md:w-auto flex justify-center items-center gap-2 bg-primary hover:bg-primary-hover text-background text-[11px] font-bold uppercase tracking-widest px-8 py-3.5 rounded-[3px] transition-colors whitespace-nowrap">
+            {copied ? <Check size={14} /> : <Copy size={14} />}
+            {copied ? "Copied!" : "Copy Link"}
           </button>
         </div>
 
@@ -69,11 +81,11 @@ export default function ShareModal() {
       {/* Bottom Actions */}
       <div className="w-full flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6 px-2 sm:px-4 mt-2">
         <div className="flex flex-col gap-3 sm:gap-4">
-          <Link to="/" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors text-[11px] font-bold uppercase tracking-widest">
+          <Link to={`/create/edit?id=${quizId}`} className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors text-[11px] font-bold uppercase tracking-widest">
             <ArrowLeft size={16} />
             Back to Editor
           </Link>
-          <Link to="/stats/1" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors text-[11px] font-bold uppercase tracking-widest">
+          <Link to={`/stats?id=${quizId}`} className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors text-[11px] font-bold uppercase tracking-widest">
             View Quiz Stats
             <BarChart2 size={16} />
           </Link>
