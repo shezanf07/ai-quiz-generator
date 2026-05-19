@@ -1,17 +1,50 @@
+import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import FormInput from "../shared/FormInput";
 import GoogleAuthBtn from "./GoogleAuthBtn";
+import { authApi, setAuthToken } from "../../services/api";
+import LoadingOverlay from "../shared/LoadingOverlay";
+
 
 export default function LoginForm() {
+    const navigate = useNavigate();
+    const location = useLocation();
+    const [errorMsg, setErrorMsg] = useState("");
+    const [loading, setLoading] = useState(false);
 
-    const handleSubmit = (e: SubmitEvent) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setErrorMsg("");
+        setLoading(true);
+
+        const formData = new FormData(e.currentTarget);
+        const email = formData.get("email") as string;
+        const password = formData.get("password") as string;
+
+        try {
+            const data = await authApi.login({ email, password });
+            setAuthToken(data.token);
+            localStorage.setItem('user_name', data.name || 'Scholar');
+
+
+            const from = (location.state as any)?.from;
+            const redirectUrl = from ? `${from.pathname}${from.search || ''}` : "/dashboard";
+            navigate(redirectUrl);
+
+        } catch (err: any) {
+            setErrorMsg(err.message || "Failed to login");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
         <form noValidate
-            onSubmit={(e) => handleSubmit(e.nativeEvent)}
+            onSubmit={handleSubmit}
             className="flex flex-col gap-6 w-full max-w-md"
         >
+            <LoadingOverlay active={loading} message="Verifying credentials..." submessage="Establishing a secure session..." />
+            {errorMsg && <div className="text-red-500 text-sm font-bold text-center bg-red-50 py-2 rounded">{errorMsg}</div>}
 
             <FormInput
                 label="EMAIL"
@@ -32,9 +65,10 @@ export default function LoginForm() {
 
             <button
                 type="submit"
-                className="w-full bg-primary hover:bg-primary-hover text-white text-[11px] font-bold uppercase tracking-[0.15em] px-8 py-4 rounded-[3px] transition-colors mt-2"
+                disabled={loading}
+                className="w-full bg-primary hover:bg-primary-hover disabled:opacity-50 text-white text-[11px] font-bold uppercase tracking-[0.15em] px-8 py-4 rounded-[3px] transition-colors mt-2"
             >
-                Log in ➔
+                {loading ? "Logging in..." : "Log in ➔"}
             </button>
 
             <div className="relative flex items-center py-4">
