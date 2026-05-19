@@ -141,7 +141,7 @@ export default function QuizViewPage() {
                     className="flex items-center gap-2 font-serif hover:opacity-80 transition-opacity shrink-0"
                 >
                     <BookOpen className="text-primary" size={22} />
-                    <span className="text-lg sm:text-2xl font-bold">Quizly</span>
+                    <span className="text-lg sm:text-2xl font-bold">QuizlyAI</span>
                 </Link>
 
                 <div className="flex flex-col items-center order-3 sm:order-2 w-full sm:w-auto">

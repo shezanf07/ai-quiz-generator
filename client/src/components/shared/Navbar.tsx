@@ -31,7 +31,7 @@ export default function Navbar() {
       <LoadingOverlay active={loggingOut} message="Signing out..." submessage="Clearing your secure credentials..." />
       <Link to="/" className="flex items-center gap-2 text-foreground font-serif tracking-tight cursor-pointer shrink-0">
         <BookOpen className="text-primary" size={24} />
-        <span className="text-lg sm:text-2xl font-bold">Quizly</span>
+        <span className="text-lg sm:text-2xl font-bold">QuizlyAI</span>
       </Link>
 
       <div className="flex items-center gap-2 sm:gap-4 md:gap-6">

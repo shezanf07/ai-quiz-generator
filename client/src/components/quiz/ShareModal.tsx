@@ -5,7 +5,7 @@ import { useState } from "react";
 
 export default function ShareModal() {
   const [searchParams] = useSearchParams();
-  const shareUrl = searchParams.get('url') || "https://quizly.app/q/placeholder";
+  const shareUrl = searchParams.get('url') || "https://QuizlyAI.app/q/placeholder";
   const quizId = searchParams.get('id') || "";
   const [copied, setCopied] = useState(false);
 

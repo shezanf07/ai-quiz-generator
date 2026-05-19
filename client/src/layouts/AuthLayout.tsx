@@ -13,7 +13,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
 
                 <Link to="/" className="flex items-center gap-2 font-serif text-primary hover:opacity-80 transition-opacity z-10 w-fit">
                     <BookOpen size={24} />
-                    <span className="text-xl font-bold">Quizly</span>
+                    <span className="text-xl font-bold">QuizlyAI</span>
                 </Link>
 
                 <div className="mt-48 z-10 max-w-lg mb-8">

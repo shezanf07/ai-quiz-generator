@@ -6,10 +6,10 @@ export default function Footer() {
       {/* Brand and copyright */}
       <div className="flex flex-col gap-2 items-center md:items-start">
         <div className="flex items-center gap-2 text-foreground font-serif tracking-tight">
-          <span className="text-xl font-bold">Quizly</span>
+          <span className="text-xl font-bold">QuizlyAI</span>
         </div>
         <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">
-          © 2026 QUIZLY. THE DIGITAL SCRIBE.
+          © 2026 QUIZLYAI. THE DIGITAL SCRIBE.
         </p>
       </div>
 

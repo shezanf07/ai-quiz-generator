@@ -24,7 +24,7 @@ export default function CreaterLayout() {
                 <div className="w-full px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
                     <Link to="/" className="flex items-center gap-2 sm:gap-3 font-serif hover:opacity-80 transition-opacity">
                         <BookOpen className="text-primary" size={22} opacity={0.8} />
-                        <span className="text-lg sm:text-2xl font-bold">Quizly</span>
+                        <span className="text-lg sm:text-2xl font-bold">QuizlyAI</span>
                     </Link>
 
                     {/* Stepper — inline on lg, hidden here (shown below on sm/md) */}

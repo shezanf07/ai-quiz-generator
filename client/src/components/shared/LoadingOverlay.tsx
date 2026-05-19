@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { Loader2, Sparkles, BookOpen, GraduationCap } from "lucide-react";
 
 interface LoadingOverlayProps {
@@ -67,7 +68,7 @@ export default function LoadingOverlay({ active, message, submessage, type = "ge
     displaySubmessage = tips.length > 0 ? tips[tipIndex] : "This won't take long.";
   }
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-9999 flex flex-col items-center justify-center bg-background/85 backdrop-blur-md animate-fade-in transition-all duration-300">
       
 
@@ -105,10 +106,11 @@ export default function LoadingOverlay({ active, message, submessage, type = "ge
         <div className="w-12 h-px bg-primary/30 my-6 mx-auto rounded-full" />
 
         <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary/60">
-          Quizly Academic System
+          QuizlyAI Academic System
         </span>
 
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

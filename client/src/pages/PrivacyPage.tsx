@@ -7,7 +7,7 @@ export default function PrivacyPage() {
             <header className="w-full px-6 md:px-12 py-6 flex items-center border-b border-border bg-background">
                 <Link to="/" className="flex items-center gap-3 font-serif hover:opacity-80 transition-opacity">
                     <BookOpen className="text-primary" size={28} />
-                    <span className="text-2xl font-bold">Quizly</span>
+                    <span className="text-2xl font-bold">QuizlyAI</span>
                 </Link>
             </header>
 
@@ -20,7 +20,7 @@ export default function PrivacyPage() {
                 <section className="bg-card border border-border p-8 rounded-2xl flex flex-col gap-6">
                     <h2 className="text-2xl font-serif text-primary">Your Privacy Matters</h2>
                     <p className="text-muted-foreground leading-relaxed">
-                        Because Quizly is a college project intended for academic assessment, we treat your mock data extremely carefully—mostly because we don't really want to look at it!
+                        Because QuizlyAI is a college project intended for academic assessment, we treat your mock data extremely carefully—mostly because we don't really want to look at it!
                     </p>
 
                     <h3 className="text-xl font-serif text-foreground mt-4">1. What we collect</h3>

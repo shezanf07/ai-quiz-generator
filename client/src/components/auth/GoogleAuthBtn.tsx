@@ -70,7 +70,7 @@ export default function GoogleOAuthBtn() {
       <div id="google-signin-btn" className="w-full flex justify-center py-2"></div>
 
 
-      //Developer Error Message
+      {/* Developer Error Message */}
       {!clientId && (
         <span className="text-[9px] text-amber-500/80 font-bold uppercase tracking-wider mt-1 text-center max-w-xs leading-normal">
           {/* ⚠️ Configure VITE_GOOGLE_CLIENT_ID in your server/.env file to activate Google Sign-In */}

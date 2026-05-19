@@ -30,7 +30,7 @@ export default function ResultsPage() {
             <header className="w-full px-6 md:px-12 py-6 flex flex-col items-start bg-background">
                 <Link to="/" className="flex items-center gap-3 font-serif hover:opacity-80 transition-opacity">
                     <BookOpen className="text-foreground" size={24} opacity={0.7} />
-                    <span className="text-xl font-bold italic text-foreground opacity-80">Quizly</span>
+                    <span className="text-xl font-bold italic text-foreground opacity-80">QuizlyAI</span>
                 </Link>
             </header>
 

@@ -43,7 +43,7 @@ export default function DashboardPage() {
             <header className="w-full px-6 md:px-12 py-6 flex items-center justify-between border-b border-border bg-background z-10 sticky top-0">
                 <Link to="/" className="flex items-center gap-3 font-serif hover:opacity-80 transition-opacity">
                     <BookOpen className="text-primary" size={28} />
-                    <span className="text-2xl font-bold">Quizly</span>
+                    <span className="text-2xl font-bold">QuizlyAI</span>
                 </Link>
 
                 <div className="flex items-center gap-3">
